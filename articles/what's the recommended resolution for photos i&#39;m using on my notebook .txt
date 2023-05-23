@@ -1,0 +1,1 @@
+"If you plan on using a single image to cover the front cover of your notebook (including the dotted Safety Zone and into the left-hand coil binding) the recommended resolution is 2025 pixels wide by 2700 pixels tall, at 300 DPI."

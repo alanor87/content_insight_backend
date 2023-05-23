@@ -1,0 +1,1 @@
+"Your code is displayed on the order confirmation page and sent to you by email after you order. You can retrieve it at any time from your order history page. Having trouble logging into the main site? You can also log in from http://picaboo.com/web/. Once you're signed in, click on your email address in the upper right and select Order StatusHistory."

@@ -1,0 +1,1 @@
+"Although not officially supported, Picaboo should run on Chromebook without any major issues."

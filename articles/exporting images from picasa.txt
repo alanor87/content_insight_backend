@@ -1,0 +1,1 @@
+"If your images are stored on a third party site such as Picasa, they'll first have to be exported to your computer before they can be imported into Picaboo for use in your project. Instruction on how to do so can be found in this article: https://support.google.com/picasa/answer/11067?hl=en ref_topic=1689654."

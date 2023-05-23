@@ -1,0 +1,1 @@
+"If you're planning to have your image cover the entire canvas (sides/wrap zone included), the recommended resolution for each size is listed below: 15x10: 2250 pixels wide by 1500 pixels tall 24x16: 3600 pixels wide by 2400 pixels tall 30x20: 4500 pixels wide by 3000 pixels tall 36x24: 5400 pixels wide by 3600 pixels tall"

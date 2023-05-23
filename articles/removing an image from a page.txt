@@ -1,0 +1,1 @@
+"To remove an image from your page:Select the image Click the Delete key on your keyboard. The image will be deleted from the page, but will remain in your project in the Media Tray If you want another image in that space instead, just drag that image from the Media Tray, drop it on the existing image and select toReplace PhotoReturn to the Picaboo User Manual"

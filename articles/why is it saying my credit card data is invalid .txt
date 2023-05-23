@@ -1,0 +1,1 @@
+"This may happen if your billing address doesn't match the one that's being used in on the order.If your shipping and billing address are different, be sure to uncheck the box that says they are the same when checking out.If it's still giving an error, be sure to check with your bank to see what billing address they have on file for you."

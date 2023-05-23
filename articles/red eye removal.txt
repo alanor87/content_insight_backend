@@ -1,0 +1,1 @@
+"We don't currently have a tool to remove red eye from a photo.We recommend using a third party software to remove that before loading the photo into Picaboo.Return to the Picaboo User Manual"

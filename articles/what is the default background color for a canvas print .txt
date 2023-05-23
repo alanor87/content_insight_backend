@@ -1,0 +1,1 @@
+"Canvas Prints default to a white background. You can change the color of the background by clicking on the canvas, then clicking on the Backgrounds tab on the left. Then click on the box next to Page background color to open the color chooser box and select a different background color."

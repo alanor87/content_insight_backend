@@ -1,0 +1,1 @@
+"If you plan on using a single image to cover the full cover, front to back, of your journal (including the wrap zone) the recommended resolution is 4350 pixels wide by 2925 pixels tall, at 300 DPI."

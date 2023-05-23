@@ -1,0 +1,1 @@
+"If you leave a caption box blank, the placeholder text ( Your Text Here ) will not be printed in your book.More information on Captions"
