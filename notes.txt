@@ -1,0 +1,9 @@
+ - Each user is a separate namespace in the index. To have an index per user would be way too expensive - 70$ a month.
+   So - the user id is the namespace, and separate project - projsect id;
+
+ - when making a query with metadata filter - the namespace should be provided. Elseway the search will go only over the default namespace,
+   which is {namespace : '' }, when omitted. 
+  
+ - for deletion of vectors by metadata filtering _delete method should be used. The previous note about the namespace is applied as well, 
+   as I understand. 
+  

@@ -1,20 +1,23 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Node 18",
-
   "_version": "2.0.0",
 
   "compilerOptions": {
     "module": "NodeNext",
     "target": "es2022",
 
-    "outDir": "./build",        
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "outDir": "./build",
 
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",    
   },
   "include": ["src/**/*"]
 }
