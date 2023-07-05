@@ -27,7 +27,8 @@
     "@types/node": "^20.2.1",
     "7-docs": "^0.1.6",
     "copyfiles": "^2.4.1",
-    "rimraf": "^5.0.1"
+    "rimraf": "^5.0.1",
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "@pinecone-database/pinecone": "^0.1.6",
