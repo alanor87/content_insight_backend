@@ -1,6 +1,9 @@
 {
   "name": "content_insight_backend",
   "version": "1.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "description": "AI powered question-answer system for predetermined text content.",
   "main": "build/bin/server.js",
   "scripts": {
