@@ -1,8 +1,9 @@
 import { User } from "@/models";
-import { Request, Response, NextFunction } from "express";
+import { RequestUserIdType } from "@/types/common";
+import { Response } from "express";
 
 const logout = async (
-  req: Request & { userId?: string },
+  req: RequestUserIdType,
   res: Response,
 ) => {
   try {

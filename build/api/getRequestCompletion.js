@@ -102,9 +102,9 @@ async function getRequestCompletion(req, res) {
     /** Here we formulate a concise question to the openAi completions endpoint, basically, now we are a user
      * that is asking a question to chatGPT - this is the best way to view what is happening.
      */
-    const prompt = `Answer the question as truthfully and accurately as possible using only the provided context.
-  If the answer is not contained within the text below, say "Sorry, I don't have that information.".
-  Context: ${context}
+    const prompt = `Answer the question as truthfully and accurately as possible using only the information provided in the context.
+  If the answer is not contained within the provided context, say "Sorry, I don't have that information.".
+  Context: ${context || 'none.'}
   Question: ${question}
   Answer: `;
     const response = await getChatCompletions(prompt);

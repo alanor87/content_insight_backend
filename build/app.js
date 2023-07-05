@@ -50,6 +50,7 @@ const errorHandler = (error, _, res, __) => {
 const allowedCorsOrigin = process.env.NODE_ENV === "development" ? "*" : "this is to figure out later";
 app.use((0, cors_1.default)()); // for now a wildcard.
 app.use(express_1.default.json());
+app.use("/widget", api.widget);
 /** Serving static react app to client, test mode for now, while still not sure if front and backend will be hosted separately or no. */
 app.use("/", express_1.default.static(path_1.default.join(process.cwd(), "build/public")));
 app.use("/cabinet", express_1.default.static(path_1.default.join(process.cwd(), "build/public")));
