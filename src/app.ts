@@ -46,7 +46,8 @@ app.use("/api/v1/user", tokenValidation, api.user);
 app.use("/api/v1/projects", tokenValidation, api.projects);
 app.use("/api/v1/getResponse", api.getRequestCompletion); // no token validation for now for testing purposes
 
-app.use((_, res) => {
+app.use((req, res) => {
+  console.log(req.path);
   res.status(404).json({
     status: "error",
     message: "Not found!",
