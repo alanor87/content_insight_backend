@@ -11,7 +11,7 @@ async function deleteProject(req, res, next) {
         // Removing deleted projectId entry from the user DB entry.
         const updatedUser = await models_1.User.findByIdAndUpdate(userId, {
             $pull: { userProjects: projectId },
-        }, { new: true });
+        }, { new: true }).populate('userProjects');
         // Removing deleted project vectors from the pinecone DB.
         await connect_pinecone_1.pinecone
             .Index("content-insight-1")

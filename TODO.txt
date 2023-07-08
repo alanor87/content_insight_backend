@@ -1,2 +1,2 @@
- - create back and front functionality for deleting the project, with all the databases cleanup.
  - create hash based check for the duplicate files on the ingestion.
+ - create widget initialization routine.

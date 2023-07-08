@@ -22,7 +22,7 @@ async function deleteProject(
         $pull: { userProjects: projectId },
       },
       { new: true }
-    );
+    ).populate('userProjects');
 
     // Removing deleted project vectors from the pinecone DB.
     await pinecone

@@ -103,8 +103,8 @@ export default async function getRequestCompletion(
   req: Request,
   res: Response
 ) {
+  console.log('request : ', req);
   const { projectId, question } = req.body;
-  console.log('projectId : ', projectId)
   const vector = await createQuestionEmbeddings({
     model: "text-embedding-ada-002",
     input: question,

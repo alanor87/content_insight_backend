@@ -2,12 +2,10 @@
   try {
     console.log("content_insight script is loaded.");
 
+    let projectId;
+
     const styleTag = document.createElement("style");
     styleTag.setAttribute("id", "content_insight_widget_styling");
-
-    function getElement(filter) {
-      return document.querySelector(filter);
-    }
 
     const elements = {
       chatPopup: {
@@ -206,6 +204,15 @@
         },
       },
     };
+
+    function getElement(filter) {
+      return document.querySelector(filter);
+    }
+
+    async function init(){
+      projectId = getElement('#content-insight-widget')?.dataset['projectId'];
+      console.log(projectId);
+    }
 
     async function sendQuestionRequest(e) {
       if (e.key && e.key !== "Enter") return;

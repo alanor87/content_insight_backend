@@ -2,12 +2,10 @@
   try {
     console.log("content_insight script is loaded.");
 
+    let projectId;
+
     const styleTag = document.createElement("style");
     styleTag.setAttribute("id", "content_insight_widget_styling");
-
-    function getElement(filter) {
-      return document.querySelector(filter);
-    }
 
     const elements = {
       chatPopup: {
@@ -207,6 +205,14 @@
       },
     };
 
+    function getElement(filter) {
+      return document.querySelector(filter);
+    }
+
+    function init(){
+      projectId = getElement('#content_insight_widget')?.dataset.projectid; // projectid data attribute name - lowercase. 
+    }
+
     async function sendQuestionRequest(e) {
       if (e.key && e.key !== "Enter") return;
       const question = getElement(".content_insight_question_input").value;
@@ -220,7 +226,7 @@
             "content-type": "application/json",
           },
           body: JSON.stringify({
-            projectId: "64a1979a92cd32814066373f",
+            projectId,
             question,
           }),
         }
@@ -282,6 +288,7 @@
       return elements;
     }
 
+    init();
     document.head.append(styleTag);
     document.body.append(...assemble(elements));
   } catch (error) {

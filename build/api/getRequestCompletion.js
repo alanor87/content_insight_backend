@@ -83,6 +83,7 @@ async function getChatCompletions(prompt) {
 /** Running all the routines for obtaining the user readable answer to the question.
  *  @question an user question, string.   */
 async function getRequestCompletion(req, res) {
+    console.log('request : ', req);
     const { projectId, question } = req.body;
     console.log('projectId : ', projectId);
     const vector = await createQuestionEmbeddings({
