@@ -59,7 +59,7 @@ app.use("/apiTest", express_1.default.static(path_1.default.join(process.cwd(), 
 app.use("/api/v1/auth", api.auth);
 app.use("/api/v1/user", middleware_1.tokenValidation, api.user);
 app.use("/api/v1/projects", middleware_1.tokenValidation, api.projects);
-app.use("/api/v1/getResponse", api.getRequestCompletion); // no token validation for now for testing purposes
+app.use("/api/v1/getCompletion", api.getRequestCompletion); // no token validation for now for testing purposes
 app.use((req, res) => {
     console.log(req.path);
     res.status(404).json({

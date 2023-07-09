@@ -19,6 +19,7 @@ async function createQuestionEmbeddings({ model, input, }) {
             body: JSON.stringify({ input, model }),
         });
         const { error, data, usage } = await response.json();
+        console.log('Error in createQuestionEmbeddings : ', error);
         return data[0].embedding;
     }
     catch (e) {
@@ -74,6 +75,7 @@ async function getChatCompletions(prompt) {
             },
             body: JSON.stringify(body),
         }).then((res) => res.json());
+        console.log('openAI chat completions response : ', data);
         return data.choices[0].message.content;
     }
     catch (e) {
@@ -85,7 +87,6 @@ async function getChatCompletions(prompt) {
 async function getRequestCompletion(req, res) {
     console.log('request : ', req);
     const { projectId, question } = req.body;
-    console.log('projectId : ', projectId);
     const vector = await createQuestionEmbeddings({
         model: "text-embedding-ada-002",
         input: question,

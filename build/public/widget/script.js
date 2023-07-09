@@ -3,6 +3,7 @@
     console.log("content_insight script is loaded.");
 
     let projectId;
+    let completionsURL;
 
     const styleTag = document.createElement("style");
     styleTag.setAttribute("id", "content_insight_widget_styling");
@@ -210,7 +211,12 @@
     }
 
     function init(){
-      projectId = getElement('#content_insight_widget')?.dataset.projectid; // projectid data attribute name - lowercase. 
+      const scriptSettings =  getElement('#content_insight_widget')?.dataset
+      projectId = scriptSettings.projectid; // projectid data attribute name - lowercase. 
+      completionsURL = scriptSettings.completionsurl;
+
+      if(!projectId) throw Error('Missing projectId.');
+      if(!Boolean(new URL(completionsURL))) throw Error('Incorrect completionsURL.');
     }
 
     async function sendQuestionRequest(e) {
@@ -219,7 +225,7 @@
       if (!question) return;
 
       const { response } = await fetch(
-        "http://localhost:3300/api/v1/getResponse",
+        completionsURL,
         {
           method: "POST",
           headers: {
