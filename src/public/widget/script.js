@@ -3,6 +3,7 @@
     console.log("content_insight script is loaded.");
 
     let projectId;
+    let completionsURL;
 
     const styleTag = document.createElement("style");
     styleTag.setAttribute("id", "content_insight_widget_styling");
@@ -209,9 +210,10 @@
       return document.querySelector(filter);
     }
 
-    async function init(){
-      projectId = getElement('#content-insight-widget')?.dataset['projectId'];
-      console.log(projectId);
+    function init(){
+      const scriptSettings =  getElement('#content_insight_widget')?.dataset
+      projectId = scriptSettings.projectid; // projectid data attribute name - lowercase. 
+      completionsURL = scriptSettings.completionsURL
     }
 
     async function sendQuestionRequest(e) {
@@ -220,14 +222,14 @@
       if (!question) return;
 
       const { response } = await fetch(
-        "http://localhost:3300/api/v1/getResponse",
+        "completionsURL",
         {
           method: "POST",
           headers: {
             "content-type": "application/json",
           },
           body: JSON.stringify({
-            projectId: "64a1979a92cd32814066373f",
+            projectId,
             question,
           }),
         }
@@ -289,6 +291,7 @@
       return elements;
     }
 
+    init();
     document.head.append(styleTag);
     document.body.append(...assemble(elements));
   } catch (error) {

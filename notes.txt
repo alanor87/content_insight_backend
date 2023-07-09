@@ -7,3 +7,5 @@
  - for deletion of vectors by metadata filtering _delete method should be used. The previous note about the namespace is applied as well, 
    as I understand. 
   
+  - when using file paths that use ** on mac or linux machines, use curly bracers - 
+    "copy-files": "copyfiles -u 1 \"src/public/**\" build/",
