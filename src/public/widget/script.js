@@ -213,7 +213,7 @@
     function init(){
       const scriptSettings =  getElement('#content_insight_widget')?.dataset
       projectId = scriptSettings.projectid; // projectid data attribute name - lowercase. 
-      completionsURL = scriptSettings.completionsURL
+      completionsURL = scriptSettings.completionsurl;
 
       if(!projectId) throw Error('Missing projectId.');
       if(!Boolean(new URL(completionsURL))) throw Error('Incorrect completionsURL.');
