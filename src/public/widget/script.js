@@ -214,6 +214,9 @@
       const scriptSettings =  getElement('#content_insight_widget')?.dataset
       projectId = scriptSettings.projectid; // projectid data attribute name - lowercase. 
       completionsURL = scriptSettings.completionsURL
+
+      if(!projectId) throw Error('Missing projectId.');
+      if(!Boolean(new URL(completionsURL))) throw Error('Incorrect completionsURL.');
     }
 
     async function sendQuestionRequest(e) {
@@ -222,7 +225,7 @@
       if (!question) return;
 
       const { response } = await fetch(
-        "completionsURL",
+        completionsURL,
         {
           method: "POST",
           headers: {
