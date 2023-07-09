@@ -25,6 +25,7 @@ async function createQuestionEmbeddings({
     });
 
     const { error, data, usage } = await response.json();
+    console.log('Error in createQuestionEmbeddings : ', error);
     return data[0].embedding;
   } catch (e) {
     console.log(
@@ -90,6 +91,8 @@ async function getChatCompletions(prompt: string) {
       },
       body: JSON.stringify(body),
     }).then((res) => res.json());
+
+    console.log('openAI chat completions response : ', data);
 
     return data.choices[0].message.content;
   } catch (e) {

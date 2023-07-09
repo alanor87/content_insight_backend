@@ -44,7 +44,7 @@ app.use(
 app.use("/api/v1/auth", api.auth);
 app.use("/api/v1/user", tokenValidation, api.user);
 app.use("/api/v1/projects", tokenValidation, api.projects);
-app.use("/api/v1/getResponse", api.getRequestCompletion); // no token validation for now for testing purposes
+app.use("/api/v1/getCompletion", api.getRequestCompletion); // no token validation for now for testing purposes
 
 app.use((req, res) => {
   console.log(req.path);
