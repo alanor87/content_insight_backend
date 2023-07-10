@@ -1,4 +1,4 @@
- - isolate widget styles! Use shadowDOM perhaps? 
  - create hash based check for the duplicate files on the ingestion.
  - make good errors logging - and user alerting about those in widget.
  - create environment switch mechanism for dev\prod switching of env variables, such as the backend address etc, both for the front and the backend.
+ - add spinner of a sort to widget.
