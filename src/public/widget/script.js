@@ -3,6 +3,7 @@
     console.log("content_insight script is loaded.");
 
     let projectId;
+    let userId;
     let completionsURL;
 
     const styleTag = document.createElement("style");
@@ -213,6 +214,7 @@
     function init(){
       const scriptSettings =  getElement('#content_insight_widget')?.dataset
       projectId = scriptSettings.projectid; // projectid data attribute name - lowercase. 
+      userId = scriptSettings.userid; // projectid data attribute name - lowercase. 
       completionsURL = scriptSettings.completionsurl;
 
       if(!projectId) throw Error('Missing projectId.');
@@ -232,6 +234,7 @@
             "content-type": "application/json",
           },
           body: JSON.stringify({
+            userId,
             projectId,
             question,
           }),

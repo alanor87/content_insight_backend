@@ -25,7 +25,6 @@ async function createQuestionEmbeddings({
     });
 
     const { error, data, usage } = await response.json();
-    console.log('Error in createQuestionEmbeddings : ', error);
     return data[0].embedding;
   } catch (e) {
     console.log(
@@ -39,26 +38,29 @@ async function createQuestionEmbeddings({
 /** Function sends the request to the vector database (pinecone in our case) with the embeddings of the question.
  * Means, hey, pinecone, here is the question, in a form of the numerical representations of textual data.
  * Please, give me the most semantically close stuff (text) to it that you have in this database.
+ * @userId defines the namespace in pinecone index. Namespace contains projects of one user.
+ * @projectId defines the filter that is applied in the search through the metadata. This is the users particular project.
+ * @vector embeddings of the user question.
  */
 async function createQuestionContext({
+  userId,
   projectId,
   vector,
 }: {
+  userId: string;
   projectId: string;
   vector: number[];
 }) {
   try {
-    console.log(projectId);
     const response = await pinecone.Index("content-insight-1").query({
       queryRequest: {
         vector,
         filter: {"projectId" : { $eq : projectId}},
         topK: 5,
         includeMetadata: true,
-        namespace: "649f2aa4d662391f341a431d",
+        namespace: userId,
       },
     });
-    console.log(response);
     return response?.matches?.map((match: any) => match.metadata) || [];
   } catch (e) {
     console.log("Error in creating question embeddings : ", e);
@@ -92,8 +94,6 @@ async function getChatCompletions(prompt: string) {
       body: JSON.stringify(body),
     }).then((res) => res.json());
 
-    console.log('openAI chat completions response : ', data);
-
     return data.choices[0].message.content;
   } catch (e) {
     console.log("Error in getting completions from openAI : ", e);
@@ -106,14 +106,14 @@ export default async function getRequestCompletion(
   req: Request,
   res: Response
 ) {
-  console.log('request : ', req);
-  const { projectId, question } = req.body;
+  const { userId, projectId, question } = req.body;
   const vector = await createQuestionEmbeddings({
     model: "text-embedding-ada-002",
     input: question,
   });
 
   const metadata = await createQuestionContext({
+    userId,
     projectId,
     vector, //  Here's the vector we received from `createEmbeddings()`, this is a numerical representation of the question.
   });

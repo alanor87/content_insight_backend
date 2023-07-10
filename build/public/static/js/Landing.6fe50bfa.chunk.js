@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkcontent_insight_frontend=self.webpackChunkcontent_insight_frontend||[]).push([[1],{199:function(n,t,e){e.r(t),e.d(t,{default:function(){return r}});var i=e(184),r=function(){return(0,i.jsx)("div",{children:"This is the Landing."})}}}]);
-//# sourceMappingURL=Landing.6fe50bfa.chunk.js.map

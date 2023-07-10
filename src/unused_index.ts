@@ -3,7 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { StringDecoder } from "string_decoder";
 
-import { getRequestCompletion } from "./api";
+import { getCompletion } from "./api";
 
 const server = createServer((req, res) => {
   const decode = new StringDecoder("utf-8");
@@ -49,7 +49,7 @@ const server = createServer((req, res) => {
           }
           case "question": {
             const { question } = JSON.parse(buffer);
-            // getRequestCompletion(question).then((response) => {
+            // getCompletion(question).then((response) => {
             //   console.log("response : ", response);
             //   res
             //     .setHeader("content-type", "application/json")

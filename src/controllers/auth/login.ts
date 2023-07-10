@@ -33,6 +33,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     const { userPassword: notSendingBack, ...userDataToSend } =
       userWithToken.toObject(); // analog of getSnapshot in MST))
 
+      console.log(userWithToken);
+
     res.status(200).json({
       status: "Success.",
       message: "User is logged in.",
