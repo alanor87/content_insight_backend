@@ -8,7 +8,10 @@
     // Shadow root div wrapper for styles isolation.
     const shadowRootWrapper = document.createElement("div");
     shadowRootWrapper.setAttribute("id", "content_insight_widget_wrapper");
-    const shadowDOM = shadowRootWrapper.attachShadow({ mode: "open", delegatesFocus: true });
+    const shadowDOM = shadowRootWrapper.attachShadow({
+      mode: "open",
+      delegatesFocus: true,
+    });
     document.body.append(shadowRootWrapper);
 
     const styleTag = document.createElement("style");
@@ -145,7 +148,7 @@
                     class: "content_insight_question_input",
                     placeholder: "How can we help?",
                     eventListeners: [
-                      { type: "keyup", func: sendQuestionRequest },
+                      { type: "keydown", func: sendQuestionRequest },
                     ],
                   },
                   clearButton: {
@@ -233,7 +236,9 @@
     }
 
     async function sendQuestionRequest(e) {
-      console.log('keyup fires :', e)
+      if (e.key === "Backspace" || e.key === "Delete") {
+        e.stopPropagation();
+      }
       if (e.key && e.key !== "Enter") return;
       const question = getElement(".content_insight_question_input").value;
       if (!question) return;
