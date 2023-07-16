@@ -32,20 +32,21 @@ app.use(express.json());
 app.use("/widget", api.widget);
 
 /** Serving static react app to client, test mode for now, while still not sure if front and backend will be hosted separately or no. */
-app.use("/", express.static(path.join(process.cwd(), "build/public")));
-app.use("/cabinet", express.static(path.join(process.cwd(), "build/public")));
+app.use("/", express.static(path.join(process.cwd(), "build/public/app")));
+app.use("/cabinet", express.static(path.join(process.cwd(), "build/public/app")));
+app.use("/cabinet/projects", express.static(path.join(process.cwd(), "build/public/app")));
+app.use("/cabinet/projects/:id", express.static(path.join(process.cwd(), "build/public/app")));
+app.use("/cabinet/stats", express.static(path.join(process.cwd(), "build/public/app")));
+app.use("/cabinet/billing", express.static(path.join(process.cwd(), "build/public/app")));
+app.use("/cabinet/settings", express.static(path.join(process.cwd(), "build/public/app")));
 
-/** Serving static small test page with a tiny chat interface. */
-app.use(
-  "/apiTest",
-  express.static(path.join(process.cwd(), "build/public/apiTest"))
-);
-
+/** API endpoints */
 app.use("/api/v1/auth", api.auth);
 app.use("/api/v1/user", tokenValidation, api.user);
 app.use("/api/v1/projects", tokenValidation, api.projects);
 app.use("/api/v1/getCompletion", api.getCompletion); // no token validation for now for testing purposes
 
+/** 404 handler */
 app.use((req, res) => {
   console.log(req.path);
   res.status(404).json({
@@ -55,6 +56,7 @@ app.use((req, res) => {
   return;
 });
 
+/** Errors handler */
 app.use(errorHandler);
 
 export { app };

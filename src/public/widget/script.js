@@ -236,6 +236,7 @@
     }
 
     async function sendQuestionRequest(e) {
+      // Need these for correct work in shadowDOM.
       if (e.key === "Backspace" || e.key === "Delete") {
         e.stopPropagation();
       }
