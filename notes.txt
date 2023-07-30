@@ -1,5 +1,5 @@
  - Each user is a separate namespace in the index. To have an index per user would be way too expensive - 70$ a month.
-   So - the user id is the namespace, and separate project - projsect id;
+   So - the user id is the namespace, and separate project - project id;
 
  - when making a query with metadata filter - the namespace should be provided. Elseway the search will go only over the default namespace,
    which is {namespace : '' }, when omitted. 

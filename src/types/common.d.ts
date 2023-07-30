@@ -21,6 +21,7 @@ type UserProjectType = {
   projectName: string;
   projectCreationDate: string;
   projectURL: string;
+  widgetURL: string;
   projectIngestedData: ProjectIngestedDataType[];
 };
 

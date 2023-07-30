@@ -18,7 +18,7 @@ async function createQuestionEmbeddings({
     const response = await fetch("https://api.openai.com/v1/embeddings", {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENAI_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       method: "POST",
       body: JSON.stringify({ input, model }),
@@ -55,7 +55,7 @@ async function createQuestionContext({
     const response = await pinecone.Index("content-insight-1").query({
       queryRequest: {
         vector,
-        filter: {"projectId" : { $eq : projectId}},
+        filter: { projectId: { $eq: projectId } },
         topK: 5,
         includeMetadata: true,
         namespace: userId,
@@ -72,7 +72,7 @@ async function createQuestionContext({
  * in which it must look for the answer to that question.
  * @prompt - question, formulated for openAI api to answer in a human readable form.
  */
-async function getChatCompletions(prompt: string) {
+async function getOpenAiCompletions(prompt: string) {
   try {
     console.log("Current prompt : ", prompt);
     const body = {
@@ -107,15 +107,28 @@ export default async function getRequestCompletion(
   res: Response
 ) {
   const { userId, projectId, question } = req.body;
+
+  /** Extracting the question keywords with openAI. We need to have those to query a meaningful context from the pinecone db.
+   * Utility words like 'how', 'why', 'is' and so on would pollute the pinecone db query result with unneeded noise.
+   * This is only needed for the pinecone - we use original question for the final completion request.
+   */
+  const keywordsPrompt = `Extract keywords from the following question, put them al a comma separated words. ${question}`
+  const questionKeywords = await getOpenAiCompletions(keywordsPrompt);
+
+  console.log('Keywords response : ', questionKeywords);
+
+  /** Creating numerical representation of the question itself. */
   const vector = await createQuestionEmbeddings({
     model: "text-embedding-ada-002",
     input: question,
   });
 
+
+  /** All the bunch of info that */
   const metadata = await createQuestionContext({
     userId,
     projectId,
-    vector, //  Here's the vector we received from `createEmbeddings()`, this is a numerical representation of the question.
+    vector,
   });
 
   /** Joining all the things that we got from the database, obtaining all the text, that is semantically close to our user question.
@@ -129,13 +142,15 @@ export default async function getRequestCompletion(
    * that is asking a question to chatGPT - this is the best way to view what is happening.
    */
 
-  const prompt = `Answer the question as truthfully and accurately as possible using only the information provided in the context.
+  const mainPrompt = `Answer the question as detailed and accurately as possible using only the information provided in the context.
   If the answer is not contained within the provided context, say "Sorry, I don't have that information.".
-  Context: ${context || 'none.'}
+  Context: ${context || "none."}
   Question: ${question}
   Answer: `;
 
-  const response = await getChatCompletions(prompt);
+  const response = await getOpenAiCompletions(mainPrompt);
+
+  console.log(response);
 
   res.status(200).json({ response });
 }

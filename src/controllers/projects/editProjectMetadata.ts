@@ -1,4 +1,4 @@
-import { Project, User } from "@/models";
+import { Project } from "@/models";
 import { RequestUserIdType, UserProjectType } from "@/types/common";
 import { getUser } from "@/utils";
 import { Response, NextFunction } from "express";
@@ -9,14 +9,14 @@ async function editProjectMetadata(
   next: NextFunction
 ) {
   try {
-    const { _id, projectName, projectURL }: UserProjectType = req.body;
+    const { _id, projectName, projectURL, widgetURL }: UserProjectType = req.body;
     const currentUser = await getUser({ _id: req.userId }, false);
     const isUserProject = currentUser?.userProjects?.find(
       (project) => project._id?.toString() === _id
     );
-    const updatedProject = await Project.findOneAndUpdate({_id}, {projectName, projectURL}, {new: true});
-
     if (!isUserProject) throw Error("Project does not belong to this user");
+
+    const updatedProject = await Project.findOneAndUpdate({_id}, {projectName, projectURL, widgetURL}, {new: true});
     if (!updatedProject) throw Error("Project not found.");
 
     res.status(200).json(updatedProject);
