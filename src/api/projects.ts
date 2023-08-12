@@ -4,7 +4,6 @@ import {createProject, deleteKnowledgeBase, deleteProject, editProjectMetadata, 
 
 const router = Router();
 
-router.get('/', (req, res) => {console.log(req.body); res.send('projects route alive')} );
 router.post('/createProject', createProject);
 router.post('/deleteProject', deleteProject);
 router.post('/editProjectMetadata', editProjectMetadata);

@@ -1,11 +1,15 @@
 (() => {
   try {
-    // Getting these from the data-attributes of the <script> tag.
-    let projectId;
-    let userId;
-    let completionsURL;
+    // Getting user settings from the data-attributes of the <script> tag.
+    const scriptSettings = document.querySelector(
+      "#content_insight_widget"
+    )?.dataset; // Attributes name - lowercase.
+    const projectId = scriptSettings.projectid; // projectid data.
+    const userId = scriptSettings.userid; // projectid data.
+    const completionsURL = scriptSettings.completionsurl; // backend address.
+    const customStyles = getCustomStyles(scriptSettings.customstyles); // custom style properties.
 
-    // Shadow root div wrapper for styles isolation.
+    // Creating shadow root div wrapper for styles isolation.
     const shadowRootWrapper = document.createElement("div");
     shadowRootWrapper.setAttribute("id", "content_insight_widget_wrapper");
     const shadowDOM = shadowRootWrapper.attachShadow({
@@ -14,6 +18,7 @@
     });
     document.body.append(shadowRootWrapper);
 
+    // Creating style tag for the shadowDOM inner styling.
     const styleTag = document.createElement("style");
 
     const elements = {
@@ -26,7 +31,7 @@
            bottom: 10px;
            right: 10px;
            width: 330px;
-           border-radius: 10px;
+           border-radius: ${customStyles?.borderRadius || "10px"};
            font-size: 14px;
            overflow: hidden;
            box-shadow: 2px 2px 5px 1px black;
@@ -45,7 +50,7 @@
           position: relative;
           display: flex;
           justify-content: center;
-          background-color: rgb(77, 23, 28);
+          background-color: ${customStyles?.headerColor || "rgb(77, 23, 28)"};
           padding: 5px;
           font-family: system-ui, Arial, sans-serif;
           font-weight: bold;
@@ -74,8 +79,8 @@
               height: 100%;
               padding: 0 11px;
               color: white;
+              background-color: transparent;
               border: none;
-              background-color: rgb(77, 23, 28);
               cursor: pointer;
             }
             `,
@@ -103,6 +108,9 @@
                 width: 100%;
                 border-radius: 5px;
                 padding: 10px 12px;
+                background-color: ${
+                  customStyles?.inputBackgroundColor || "white"
+                };
                 border: 1px solid grey;
               }
               .content_insight_input_wrapper button {
@@ -147,6 +155,7 @@
                     type: "input",
                     class: "content_insight_question_input",
                     placeholder: "How can we help?",
+                    style: `{background-color: transparent;}`,
                     eventListeners: [
                       { type: "keydown", func: sendQuestionRequest },
                     ],
@@ -154,7 +163,6 @@
                   clearButton: {
                     type: "button",
                     class: "content_insight_clear_button",
-                    style: "",
                     eventListeners: [
                       {
                         type: "click",
@@ -216,56 +224,23 @@
       },
     };
 
-    /** Getting elements from inside of the shadowDOM. */
+    /** Extraction of custom styles from the script user settings. */
+    function getCustomStyles(stylesObject) {
+      try {
+        return JSON.parse(stylesObject.replaceAll("'", '"'));
+      } catch (e) {
+        return "";
+      }
+    }
+
+    /** Querying elements from inside of the shadowDOM. */
     function getElement(filter) {
       return shadowRootWrapper.shadowRoot.querySelector(filter);
     }
 
-    function init() {
-      const scriptSettings = document.querySelector(
-        "#content_insight_widget"
-      )?.dataset; // Attributes name - lowercase.
-      projectId = scriptSettings.projectid; // projectid data.
-      userId = scriptSettings.userid; // projectid data.
-      completionsURL = scriptSettings.completionsurl; // backend address.
-
-      if (!projectId) throw Error("Missing projectId.");
-      if (!userId) throw Error("Missing userId.");
-      if (!Boolean(new URL(completionsURL)))
-        throw Error("Incorrect completionsURL.");
-    }
-
-    async function sendQuestionRequest(e) {
-      // Need these for correct work in shadowDOM.
-      if (e.key === "Backspace" || e.key === "Delete") {
-        e.stopPropagation();
-      }
-      if (e.key && e.key !== "Enter") return;
-      const question = getElement(".content_insight_question_input").value;
-      if (!question) return;
-
-      const { response } = await fetch(completionsURL, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          projectId,
-          question,
-        }),
-      }).then((res) => res.json());
-
-      getElement(".content_insight_ask_button").style.setProperty(
-        "display",
-        "none"
-      );
-      getElement(".content_insight_response_block").textContent = response;
-      console.log("question : ", question, "\n", "response : ", response);
-    }
-
-    function assemble(elementsList) {
-      const elements = Object.entries(elementsList).map(([key, value]) => {
+    /** Assembling widget DOM. */
+    function assembleWidget(elementsList) {
+      const elements = Object.entries(elementsList).map(([_, value]) => {
         const {
           type,
           style,
@@ -304,7 +279,7 @@
           `;
 
         // Appending children
-        if (children) element.append(...assemble(children));
+        if (children) element.append(...assembleWidget(children));
 
         return element;
       });
@@ -312,11 +287,47 @@
       return elements;
     }
 
-    init();
+    async function sendQuestionRequest(e) {
+      // Need these for correct work in shadowDOM.
+      if (e.key === "Backspace" || e.key === "Delete") {
+        e.stopPropagation();
+      }
+      if (e.key && e.key !== "Enter") return;
+      const question = getElement(".content_insight_question_input").value;
+      if (!question) return;
 
-    shadowDOM.append(styleTag);
-    shadowDOM.append(...assemble(elements));
-    console.log("%ccontent_insight script is loaded.", "color: green");
+      const { response } = await fetch(completionsURL, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          projectId,
+          question,
+        }),
+      }).then((res) => res.json());
+
+      getElement(".content_insight_ask_button").style.setProperty(
+        "display",
+        "none"
+      );
+      getElement(".content_insight_response_block").textContent = response;
+      console.log("question : ", question, "\n", "response : ", response);
+    }
+
+    function init() {
+      if (!projectId) throw Error("Missing projectId.");
+      if (!userId) throw Error("Missing userId.");
+      if (!Boolean(new URL(completionsURL)))
+        throw Error("Incorrect completionsURL.");
+
+      shadowDOM.append(styleTag);
+      shadowDOM.append(...assembleWidget(elements));
+      console.log("%ccontent_insight script is loaded.", "color: green");
+    }
+
+    init();
   } catch (error) {
     console.error("content_insight script loading failed.", error);
   }
