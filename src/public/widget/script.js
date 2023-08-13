@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   try {
     // Getting user settings from the data-attributes of the <script> tag.
     const scriptSettings = document.querySelector(
@@ -6,8 +6,8 @@
     )?.dataset; // Attributes name - lowercase.
     const projectId = scriptSettings.projectid; // projectid data.
     const userId = scriptSettings.userid; // projectid data.
-    const completionsURL = scriptSettings.completionsurl; // backend address.
-    const customStyles = getCustomStyles(scriptSettings.customstyles); // custom style properties.
+    const backendURL = scriptSettings.backendurl; // backend address.
+    const customStyles = await getWidgetStyles(); // custom style properties.
 
     // Creating shadow root div wrapper for styles isolation.
     const shadowRootWrapper = document.createElement("div");
@@ -31,7 +31,13 @@
            bottom: 10px;
            right: 10px;
            width: 330px;
-           border-radius: ${customStyles?.borderRadius || "10px"};
+           background-color: ${
+             customStyles?.widgetBackgroundColor || "#f0f0f0"
+           };
+           border-style: solid;
+           border-color: ${customStyles?.widgetBorderColor || "#f0f0f0"};
+           border-radius: ${(customStyles?.widgetBorderRadius || "5") + "px"};
+           border-width: ${(customStyles?.widgetBorderWidth || "0") + "px"};
            font-size: 14px;
            overflow: hidden;
            box-shadow: 2px 2px 5px 1px black;
@@ -50,7 +56,9 @@
           position: relative;
           display: flex;
           justify-content: center;
-          background-color: ${customStyles?.headerColor || "rgb(77, 23, 28)"};
+          background-color: ${
+            customStyles?.widgetHeaderColor || "rgb(77, 23, 28)"
+          };
           padding: 5px;
           font-family: system-ui, Arial, sans-serif;
           font-weight: bold;
@@ -108,9 +116,7 @@
                 width: 100%;
                 border-radius: 5px;
                 padding: 10px 12px;
-                background-color: ${
-                  customStyles?.inputBackgroundColor || "white"
-                };
+                background-color: white;
                 border: 1px solid grey;
               }
               .content_insight_input_wrapper button {
@@ -233,12 +239,24 @@
       }
     }
 
-    /** Querying elements from inside of the shadowDOM. */
+    async function getWidgetStyles() {
+      const widgetStyles = await fetch(backendURL + "/widget/getWidgetStyles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ projectId }),
+      }).then((res) => res.json());
+
+      return widgetStyles;
+    }
+
+    /** Query elements from inside of the shadowDOM. */
     function getElement(filter) {
       return shadowRootWrapper.shadowRoot.querySelector(filter);
     }
 
-    /** Assembling widget DOM. */
+    /** Assembly of widget DOM. */
     function assembleWidget(elementsList) {
       const elements = Object.entries(elementsList).map(([_, value]) => {
         const {
@@ -295,7 +313,7 @@
       if (e.key && e.key !== "Enter") return;
       const question = getElement(".content_insight_question_input").value;
       if (!question) return;
-
+      const completionsURL = backendURL + "/api/v1/getCompletion";
       const { response } = await fetch(completionsURL, {
         method: "POST",
         headers: {
@@ -319,8 +337,7 @@
     function init() {
       if (!projectId) throw Error("Missing projectId.");
       if (!userId) throw Error("Missing userId.");
-      if (!Boolean(new URL(completionsURL)))
-        throw Error("Incorrect completionsURL.");
+      if (!Boolean(new URL(backendURL))) throw Error("Incorrect backendURL.");
 
       shadowDOM.append(styleTag);
       shadowDOM.append(...assembleWidget(elements));

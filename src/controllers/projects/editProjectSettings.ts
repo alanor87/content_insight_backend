@@ -3,20 +3,20 @@ import { RequestUserIdType, UserProjectType } from "@/types/common";
 import { getUser } from "@/utils";
 import { Response, NextFunction } from "express";
 
-async function editProjectMetadata(
+async function editProjectSettings(
   req: RequestUserIdType,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const { _id, projectName, projectURL, widgetURL }: UserProjectType = req.body;
+    const { _id, projectName, projectURL, widgetSettings }: UserProjectType = req.body;
     const currentUser = await getUser({ _id: req.userId }, false);
     const isUserProject = currentUser?.userProjects?.find(
       (project) => project._id?.toString() === _id
     );
     if (!isUserProject) throw Error("Project does not belong to this user");
 
-    const updatedProject = await Project.findOneAndUpdate({_id}, {projectName, projectURL, widgetURL}, {new: true});
+    const updatedProject = await Project.findOneAndUpdate({_id}, {projectName, projectURL, widgetSettings}, {new: true});
     if (!updatedProject) throw Error("Project not found.");
 
     res.status(200).json(updatedProject);
@@ -25,4 +25,4 @@ async function editProjectMetadata(
   }
 }
 
-export default editProjectMetadata;
+export default editProjectSettings;

@@ -21,8 +21,19 @@ type UserProjectType = {
   projectName: string;
   projectCreationDate: string;
   projectURL: string;
-  widgetURL: string;
   projectIngestedData: ProjectIngestedDataType[];
+  widgetSettings: {
+    widgetHeaderColor: string;
+    widgetBackgroundColor: string;
+    widgetBorderColor: string;
+    widgetBorderWidth: string;
+    widgetBorderRadius: string;
+  };
 };
 
-export { RequestUserIdType, UserType, UserProjectType, ProjectIngestedDataType };
+export {
+  RequestUserIdType,
+  UserType,
+  UserProjectType,
+  ProjectIngestedDataType,
+};

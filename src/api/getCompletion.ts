@@ -112,17 +112,16 @@ export default async function getRequestCompletion(
    * Utility words like 'how', 'why', 'is' and so on would pollute the pinecone db query result with unneeded noise.
    * This is only needed for the pinecone - we use original question for the final completion request.
    */
-  const keywordsPrompt = `Extract keywords from the following question, put them al a comma separated words. ${question}`
+  const keywordsPrompt = `Extract keywords from the following question, put them al a comma separated words. ${question}`;
   const questionKeywords = await getOpenAiCompletions(keywordsPrompt);
 
-  console.log('Keywords response : ', questionKeywords);
+  console.log("Keywords response : ", questionKeywords);
 
   /** Creating numerical representation of the question itself. */
   const vector = await createQuestionEmbeddings({
     model: "text-embedding-ada-002",
-    input: question,
+    input: questionKeywords,
   });
-
 
   /** All the bunch of info that */
   const metadata = await createQuestionContext({
@@ -142,11 +141,12 @@ export default async function getRequestCompletion(
    * that is asking a question to chatGPT - this is the best way to view what is happening.
    */
 
-  const mainPrompt = `Answer the question as detailed and accurately as possible using only the information provided in the context.
+  const mainPrompt = `
+  Answer the question as detailed and accurately as possible using only the information provided in the context.
   If the answer is not contained within the provided context, say "Sorry, I don't have that information.".
-  Context: ${context || "none."}
-  Question: ${question}
-  Answer: `;
+  [Context] : ${context || "no information provided."} ;
+
+  [Question]: ${question} ;`;
 
   const response = await getOpenAiCompletions(mainPrompt);
 

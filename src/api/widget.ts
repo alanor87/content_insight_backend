@@ -1,14 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import path from "path";
+import {getWidget, getWidgetStyles} from "@/controllers/widget";
+import { Router } from "express";
 
-function widget(req: Request, res: Response, next: NextFunction) {
-  try {
-    res.sendFile(path.join(process.cwd(), "build/public/widget/script.js"), {
-      headers: { "content-type": "application/javascript" },
-    });
-  } catch (error: any) {
-    next(error);
-  }
-}
+const router = Router();
 
-export default widget;
+router.get('/getWidget', getWidget);
+router.post('/getWidgetStyles', getWidgetStyles);
+
+export default router;
