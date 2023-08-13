@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/static/css/main.e9025f42.css",
-    "main.js": "/static/js/main.c1b868ed.js",
+    "main.js": "/static/js/main.c39cfc26.js",
     "Landing.css": "/static/css/Landing.408cb1ba.chunk.css",
     "Landing.js": "/static/js/Landing.fbfa2827.chunk.js",
-    "Cabinet.css": "/static/css/Cabinet.03f7047a.chunk.css",
-    "Cabinet.js": "/static/js/Cabinet.18506d61.chunk.js",
+    "Cabinet.css": "/static/css/Cabinet.129275c3.chunk.css",
+    "Cabinet.js": "/static/js/Cabinet.7a6567a4.chunk.js",
     "static/media/sprite.svg": "/static/media/sprite.65ef85d997f62e3c11fc309e5cf7e1a9.svg",
     "index.html": "/index.html",
     "main.e9025f42.css.map": "/static/css/main.e9025f42.css.map",
-    "main.c1b868ed.js.map": "/static/js/main.c1b868ed.js.map",
+    "main.c39cfc26.js.map": "/static/js/main.c39cfc26.js.map",
     "Landing.408cb1ba.chunk.css.map": "/static/css/Landing.408cb1ba.chunk.css.map",
     "Landing.fbfa2827.chunk.js.map": "/static/js/Landing.fbfa2827.chunk.js.map",
-    "Cabinet.03f7047a.chunk.css.map": "/static/css/Cabinet.03f7047a.chunk.css.map",
-    "Cabinet.18506d61.chunk.js.map": "/static/js/Cabinet.18506d61.chunk.js.map"
+    "Cabinet.129275c3.chunk.css.map": "/static/css/Cabinet.129275c3.chunk.css.map",
+    "Cabinet.7a6567a4.chunk.js.map": "/static/js/Cabinet.7a6567a4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e9025f42.css",
-    "static/js/main.c1b868ed.js"
+    "static/js/main.c39cfc26.js"
   ]
 }
