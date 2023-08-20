@@ -41,7 +41,7 @@ async function ingestKnowledgeBase(
       // Cleaning up the file text.
       const text = buffer
         .toString("utf-8")
-        .replaceAll(/^[\w,.!?']/g, " ")
+        .replaceAll(/^[\w!?']/g, " ")
         .replaceAll(/\n/g, " ")
         .replaceAll(/  +/g, " ")
         .toLowerCase();

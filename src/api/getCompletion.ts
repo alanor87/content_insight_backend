@@ -6,6 +6,36 @@ dotenv.config();
 
 const { OPENAI_API_KEY = "" } = process.env;
 
+/** OpenAI API completions request for given prompt.
+ */
+async function getOpenAiCompletions(prompt: string) {
+  try {
+    console.log("Current prompt : ", prompt);
+    const body = {
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    };
+
+    const data = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+
+    return data.choices[0].message.content;
+  } catch (e) {
+    console.log("Error in getting completions from openAI : ", e);
+  }
+}
+
 /** Making embeddings of the user question, through openAI api call. */
 async function createQuestionEmbeddings({
   model,
@@ -56,7 +86,7 @@ async function createQuestionContext({
       queryRequest: {
         vector,
         filter: { projectId: { $eq: projectId } },
-        topK: 5,
+        topK: 7,
         includeMetadata: true,
         namespace: userId,
       },
@@ -64,39 +94,6 @@ async function createQuestionContext({
     return response?.matches?.map((match: any) => match.metadata) || [];
   } catch (e) {
     console.log("Error in creating question embeddings : ", e);
-  }
-}
-
-/** Function that makes the request for the completion to the openAI completions endpoint.
- * In a nutshell - we give the openAI the big message (prompt), whith our question and the context,
- * in which it must look for the answer to that question.
- * @prompt - question, formulated for openAI api to answer in a human readable form.
- */
-async function getOpenAiCompletions(prompt: string) {
-  try {
-    console.log("Current prompt : ", prompt);
-    const body = {
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    };
-
-    const data = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
-
-    return data.choices[0].message.content;
-  } catch (e) {
-    console.log("Error in getting completions from openAI : ", e);
   }
 }
 
@@ -112,7 +109,7 @@ export default async function getRequestCompletion(
    * Utility words like 'how', 'why', 'is' and so on would pollute the pinecone db query result with unneeded noise.
    * This is only needed for the pinecone - we use original question for the final completion request.
    */
-  const keywordsPrompt = `Extract keywords from the following question, put them al a comma separated words. ${question}`;
+  const keywordsPrompt = `Extract keywords from the following prompt, return them as string fo keywords, separated by single space without commas. [Question] : ${question}`;
   const questionKeywords = await getOpenAiCompletions(keywordsPrompt);
 
   console.log("Keywords response : ", questionKeywords);
@@ -142,11 +139,14 @@ export default async function getRequestCompletion(
    */
 
   const mainPrompt = `
-  Answer the question as detailed and accurately as possible using only the information provided in the context.
-  If the answer is not contained within the provided context, say "Sorry, I don't have that information.".
-  [Context] : ${context || "no information provided."} ;
+  [Question]: ${question} ;
 
-  [Question]: ${question} ;`;
+  Answer the question above as detailed and accurately as possible using only the information provided below.
+  If the answer is not provided below, say "Sorry, I don't have that information."
+  
+  ${context || "no information provided."};
+  
+ `;
 
   const response = await getOpenAiCompletions(mainPrompt);
 
