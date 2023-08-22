@@ -12,6 +12,7 @@
     // Creating shadow root div wrapper for styles isolation.
     const shadowRootWrapper = document.createElement("div");
     shadowRootWrapper.setAttribute("id", "content_insight_widget_wrapper");
+    shadowRootWrapper.setAttribute("style", "position: absolute; z-index: 10000;");
     const shadowDOM = shadowRootWrapper.attachShadow({
       mode: "open",
       delegatesFocus: true,

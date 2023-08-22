@@ -144,7 +144,7 @@ export default async function getRequestCompletion(
   
   This is the information that you know on this subject :  ${context}.
 
-  Answer the customer's question concisely and truthfully, basing on the informatin, provided above
+  Answer the customer's question concisely and truthfully, basing only on the informatin, provided above.
  `;
  
  console.log("[Current prompt] :", mainPrompt);
