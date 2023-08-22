@@ -20,6 +20,45 @@
 
     // Creating style tag for the shadowDOM inner styling.
     const styleTag = document.createElement("style");
+    // Adding the animations keyframes.
+    styleTag.innerHTML += `
+    @keyframes shadowAnimation {
+      0% {
+        box-shadow: 0 0 10px 10px  ${
+          customStyles?.widgetHeaderColor || "rgb(77, 23, 28)"
+        };
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(0.8);
+      }
+      100% {
+        box-shadow: 0 0 30px 10px  ${
+          customStyles?.widgetHeaderColor || "rgb(77, 23, 28)"
+        };
+        transform: scale(1);
+      }
+    }
+    @keyframes animationInner {
+      0% {
+        box-shadow: inset 0 0 0 0  ${
+          customStyles?.widgetHeaderColor || "rgb(77, 23, 28)"
+        };
+        transform: scale(0);
+      }
+      50% {
+        box-shadow: inset 0 0 10px 10px  ${
+          customStyles?.widgetBackgroundColor || "rgb(77, 23, 28)"
+        };
+      }
+      100% {
+        box-shadow: inset 0 0 20px 20px  ${
+          customStyles?.widgetHeaderColor || "rgb(77, 23, 28)"
+        };
+        transform: scale(1);
+      }
+    }
+    `;
 
     const elements = {
       chatPopup: {
@@ -100,6 +139,7 @@
             class: "content_insight_content",
             style: `
           {
+           position: relative;
            display: flex;
            gap: 10px;
            flex-wrap: wrap;
@@ -221,23 +261,105 @@
                 style: `
               {
                 white-space: break-spaces;
+                max-height: 300px;
+                overflow-y: auto;
               }
               `,
+              },
+
+              spinner: {
+                type: "div",
+                class: "content_insight_spinner_backdrop",
+                style: `
+          {
+            position: absolute;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 4;
+          }`,
+                children: {
+                  spinnerContainerWrapper: {
+                    type: "div",
+                    class: "content_insight_spinner_container_wrapper",
+                    style: `
+                     {
+                       position: absolute;
+                       top: 50%;
+                       left: 50%;
+                       transform: translate(-50%, -50%);
+                     }`,
+                    children: {
+                      spinnerContainer: {
+                        type: "div",
+                        class: "content_insight_spinner_container",
+                        style: `
+                             {
+                              width: 20px;
+                              height: 20px;
+                              border-radius: 50%;
+                              background-color: ${
+                                customStyles?.widgetHeaderColor ||
+                                "rgb(77, 23, 28)"
+                              };
+                              animation-name: shadowAnimation;
+                              animation-duration: 4s;
+                              animation-direction: alternate;
+                              animation-timing-function: ease-in-out;
+                              animation-iteration-count: infinite;
+                             }`,
+                        children: {
+                          spinnerInnerContainer: {
+                            type: "div",
+                            class: "content_insight_spinner_inner_container",
+                            style: `
+                                       {
+                                        position: absolute;
+                                        width: 20px;
+                                        height: 20px;
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                        border-radius: 50%;
+                                        animation-name: animationInner;
+                                        animation-duration: 4s;
+                                        animation-iteration-count: infinite;
+                                        animation-timing-function: ease-in-out;
+                                        pointer-events: none;
+                                       }`,
+                          },
+                        },
+                      },
+                      spinnerText: {
+                        type: "span",
+                        class: "content_insight_spinner_text",
+                        style: `
+                                   {
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    font-weight: 600;
+                                    transform: translate(-50%, -50%);
+                                    white-space: nowrap;
+                                    user-select: none;
+                                   }`,
+                        innerHTML: "thinking...",
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         },
       },
     };
-
-    /** Extraction of custom styles from the script user settings. */
-    function getCustomStyles(stylesObject) {
-      try {
-        return JSON.parse(stylesObject.replaceAll("'", '"'));
-      } catch (e) {
-        return "";
-      }
-    }
 
     async function getWidgetStyles() {
       const widgetStyles = await fetch(backendURL + "/widget/getWidgetStyles", {
@@ -246,7 +368,11 @@
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ projectId }),
-      }).then((res) => res.json());
+      })
+        .then((res) => res.json())
+        .catch((e) =>
+          console.error("%cCould not fetch widget styles : ", e.message)
+        );
 
       return widgetStyles;
     }
@@ -296,7 +422,7 @@
           .${attributes.class} ${style}
           `;
 
-        // Appending children
+        // Appending children recursively.
         if (children) element.append(...assembleWidget(children));
 
         return element;
@@ -314,6 +440,10 @@
       const question = getElement(".content_insight_question_input").value;
       if (!question) return;
       const completionsURL = backendURL + "/api/v1/getCompletion";
+      getElement(".content_insight_spinner_backdrop").style.setProperty(
+        "display",
+        "flex"
+      );
       const { response } = await fetch(completionsURL, {
         method: "POST",
         headers: {
@@ -327,6 +457,10 @@
       }).then((res) => res.json());
 
       getElement(".content_insight_ask_button").style.setProperty(
+        "display",
+        "none"
+      );
+      getElement(".content_insight_spinner_backdrop").style.setProperty(
         "display",
         "none"
       );

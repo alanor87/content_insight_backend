@@ -25,10 +25,6 @@ const ProjectSchema = new Schema(
       },
     ],
     widgetSettings: {
-      widgetURL: {
-        type: String,
-        default: process.env.DEFAULT_WIDGET_URL,
-      },
       widgetHeaderColor: {
         type: String,
         default: "#ac84e1",

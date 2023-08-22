@@ -10,7 +10,6 @@ const { OPENAI_API_KEY = "" } = process.env;
  */
 async function getOpenAiCompletions(prompt: string) {
   try {
-    console.log("Current prompt : ", prompt);
     const body = {
       model: "gpt-3.5-turbo",
       messages: [
@@ -86,7 +85,7 @@ async function createQuestionContext({
       queryRequest: {
         vector,
         filter: { projectId: { $eq: projectId } },
-        topK: 7,
+        topK: 5,
         includeMetadata: true,
         namespace: userId,
       },
@@ -109,10 +108,10 @@ export default async function getRequestCompletion(
    * Utility words like 'how', 'why', 'is' and so on would pollute the pinecone db query result with unneeded noise.
    * This is only needed for the pinecone - we use original question for the final completion request.
    */
-  const keywordsPrompt = `Extract keywords from the following prompt, return them as string fo keywords, separated by single space without commas. [Question] : ${question}`;
+  const keywordsPrompt = `Extract keywords from the following prompt, dropping all the non-specific words. Return keywords as string of words, separated by single space without commas. [Question] : ${question}`;
   const questionKeywords = await getOpenAiCompletions(keywordsPrompt);
 
-  console.log("Keywords response : ", questionKeywords);
+  console.log("[Extracted question keywords] : ", questionKeywords);
 
   /** Creating numerical representation of the question itself. */
   const vector = await createQuestionEmbeddings({
@@ -133,24 +132,26 @@ export default async function getRequestCompletion(
    * and from which it is going to formulate the answer.
    */
   const context = metadata?.map((data: any) => data.content).join(" ");
+  console.log('[Pinecone query result for question keywords] : ', context);
 
   /** Here we formulate a concise question to the openAi completions endpoint, basically, now we are a user
    * that is asking a question to chatGPT - this is the best way to view what is happening.
    */
 
   const mainPrompt = `
-  [Question]: ${question} ;
+  You are a chat bot representative of the company, who received the question from a customer.
+  The customer asks you : ${question}
+  
+  This is the information that you know on this subject :  ${context}.
 
-  Answer the question above as detailed and accurately as possible using only the information provided below.
-  If the answer is not provided below, say "Sorry, I don't have that information."
-  
-  ${context || "no information provided."};
-  
+  Answer the customer's question concisely and truthfully, basing on the informatin, provided above
  `;
+ 
+ console.log("[Current prompt] :", mainPrompt);
 
   const response = await getOpenAiCompletions(mainPrompt);
 
-  console.log(response);
+  console.log('[OpenAI user prompt response] :', response);
 
   res.status(200).json({ response });
 }
