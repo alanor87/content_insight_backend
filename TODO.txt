@@ -1,6 +1,5 @@
  - create hash based check for the duplicate files on the ingestion.
  - make good errors logging - and user alerting about those in widget.
  - create environment switch mechanism for dev\prod switching of env variables, such as the backend address etc, both for the front and the backend.
- - add spinner of a sort to widget.
- - while I'm sittin on the free plan on the Pinecone - I need to create a worker that would 'ping' the pinecone api once a day or so. Cause 
-   thet delete the free intex after a week  of inactivity.
+
+    - work on the prompt - so it would not say anyting beyi=ond the context!

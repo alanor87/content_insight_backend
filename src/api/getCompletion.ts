@@ -142,7 +142,7 @@ export default async function getRequestCompletion(
   You are a chat bot representative of the company, who received the question from a customer.
   The customer asks you : ${question}
   
-  This is the information that you know on this subject :  ${context}.
+  This is the information that you know on this subject :  ${context || 'you know nothing on this particular subject.'}.
 
   Answer the customer's question concisely and truthfully, basing only on the informatin, provided above.
  `;
