@@ -31,9 +31,21 @@ type UserProjectType = {
   };
 };
 
+type FilesUploadtempStorageType = {
+  [userId: string]: {
+    [projectId: string]: {
+      files: Express.Multer.File[];
+      userId: string;
+      projectId: string;
+      projectName: string;
+    };
+  };
+};
+
 export {
   RequestUserIdType,
   UserType,
   UserProjectType,
   ProjectIngestedDataType,
+  FilesUploadtempStorageType,
 };

@@ -12,7 +12,10 @@
     // Creating shadow root div wrapper for styles isolation.
     const shadowRootWrapper = document.createElement("div");
     shadowRootWrapper.setAttribute("id", "content_insight_widget_wrapper");
-    shadowRootWrapper.setAttribute("style", "position: absolute; z-index: 10000;");
+    shadowRootWrapper.setAttribute(
+      "style",
+      "position: absolute; z-index: 10000;"
+    );
     const shadowDOM = shadowRootWrapper.attachShadow({
       mode: "open",
       delegatesFocus: true,
@@ -82,10 +85,12 @@
            overflow: hidden;
            box-shadow: 2px 2px 5px 1px black;
          }
+
          .content_insight_chat_popup.closed {
-          width: 30px;
-          height: 25px;
-         }`,
+          width: 60px;
+          height: 30px;
+         }
+        `,
         children: {
           header: {
             type: "div",
@@ -94,8 +99,10 @@
             style: ` 
         {
           position: relative;
+          height: 20px;
           display: flex;
           justify-content: center;
+          align-items: center;
           background-color: ${
             customStyles?.widgetHeaderColor || "rgb(77, 23, 28)"
           };
@@ -113,10 +120,20 @@
                 eventListeners: [
                   {
                     type: "click",
-                    func: () =>
-                      getElement(
+                    func: () => {
+                      const toggleButtonRef = getElement(
+                        ".content_insight_toggle-button"
+                      );
+                      const popupRef = getElement(
                         ".content_insight_chat_popup"
-                      ).classList.toggle("closed"),
+                      );
+                      popupRef.classList.toggle("closed");
+                      toggleButtonRef.style = popupRef.classList.contains(
+                        "closed"
+                      )
+                        ? "width: 100%; opacity: 0"
+                        : "";
+                    },
                   },
                 ],
                 style: `
@@ -131,6 +148,10 @@
               border: none;
               cursor: pointer;
             }
+
+            .content_insight_chat_popup.closed .content_insight_toggle-button{
+              font-size: 2em;
+             }
             `,
               },
             },

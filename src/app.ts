@@ -8,6 +8,7 @@ import * as api from "@/api";
 import { tokenValidation } from "./middleware";
 
 import type { ErrorRequestHandler } from "express";
+import { filesUploadProgress } from "./controllers/projects";
 
 dotenv.config();
 
@@ -44,6 +45,8 @@ app.use("/cabinet/settings", express.static(path.join(process.cwd(), "build/publ
 app.use("/api/v1/auth", api.auth);
 app.use("/api/v1/user", tokenValidation, api.user);
 app.use("/api/v1/projects", tokenValidation, api.projects);
+
+app.get('/api/v1/filesUploadProgress', filesUploadProgress);
 app.use("/api/v1/getCompletion", api.getCompletion); // no token validation for now for testing purposes
 
 /** 404 handler */
