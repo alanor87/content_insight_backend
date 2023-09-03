@@ -1,12 +1,10 @@
  - create hash based check for the duplicate files on the ingestion.
  - make good errors logging - and user alerting about those in widget.
  - create environment switch mechanism for dev\prod switching of env variables, such as the backend address etc, both for the front and the backend.
- - register a domain name on heroku.
- - [PICABOO] - make the articles scrapper to bypass cloudflare protection.
+ - register a domain namу.
 
     - ctrl-c ctrl-v stuff, not working - suppose due to the shadowDOM thing.
-    - work on the prompt - so it would not say anyting beyi=ond the context!
-    - work on removing that long single response await, when the knowledge base is being ingested. That causes more than 30 sec delay, when there are lot of files - 
-    heroku sends 503 to the client in that case. Besides, this would include implementation of some sort of SSR to inform the client on the ingestion progress
-    on every ingested file. Heroku article on this :
-      https://devcenter.heroku.com/articles/request-timeout
+    - work on the prompt - so it would not say anyting beyond the context!
+   - add the widget functionality testing directly in the project page.
+
+   - implement some kind of load balancing and ability to benchmark performance under different loads.

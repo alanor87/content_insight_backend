@@ -15,11 +15,15 @@ import {
 import dotenv from "dotenv";
 dotenv.config();
 
-const { SECRET_KEY = "" } = process.env;
+const { SECRET_KEY = "", RECAPTCHA_SECRET_KEY } = process.env;
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userEmail, userPassword = "" }: UserType = req.body;
+    const {
+      userEmail,
+      userPassword = "",
+      recaptchaValue,
+    }: UserType & { recaptchaValue: string } = req.body;
 
     // Checking if the user with this email exist.
     const userEmailDoesExist = await getUser({ userEmail: userEmail });
@@ -30,6 +34,23 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       });
       return;
     }
+
+    // Recaptcha user challenge result check.
+    await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaValue}`,
+      { method: "POST" }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.success) {
+          res.status(409).json({
+            status: "Recaptcha failed",
+            message:
+              "Recaptcha validation failed :\n" + data["error-codes"],
+          });
+          return;
+        }
+      });
 
     // Creating new user in mongoDB.
     const newUser = new User({ userEmail });
