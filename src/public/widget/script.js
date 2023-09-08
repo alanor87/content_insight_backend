@@ -238,10 +238,10 @@
                           getElement(".clarify_bot_question_input").value =
                             "";
                           getElement(
-                            ".content_insight_response_block"
+                            ".clarify_bot_response_block"
                           ).innerHTML = "";
                           getElement(
-                            ".content_insight_ask_button"
+                            ".clarify_bot_ask_button"
                           ).style.setProperty("display", "block");
                         },
                       },
@@ -272,14 +272,14 @@
               askButton: {
                 type: "button",
                 title: "Send question request",
-                class: "content_insight_ask_button",
+                class: "clarify_bot_ask_button",
                 innerHTML: "Ask!",
                 eventListeners: [{ type: "click", func: sendQuestionRequest }],
               },
 
               responseBlock: {
                 type: "div",
-                class: "content_insight_response_block",
+                class: "clarify_bot_response_block",
                 style: `
               {
                 white-space: break-spaces;
@@ -291,7 +291,7 @@
 
               spinner: {
                 type: "div",
-                class: "content_insight_spinner_backdrop",
+                class: "clarify_bot_spinner_backdrop",
                 style: `
           {
             position: absolute;
@@ -309,7 +309,7 @@
                 children: {
                   spinnerContainerWrapper: {
                     type: "div",
-                    class: "content_insight_spinner_container_wrapper",
+                    class: "clarify_bot_spinner_container_wrapper",
                     style: `
                      {
                        position: absolute;
@@ -320,7 +320,7 @@
                     children: {
                       spinnerContainer: {
                         type: "div",
-                        class: "content_insight_spinner_container",
+                        class: "clarify_bot_spinner_container",
                         style: `
                              {
                               width: 20px;
@@ -339,7 +339,7 @@
                         children: {
                           spinnerInnerContainer: {
                             type: "div",
-                            class: "content_insight_spinner_inner_container",
+                            class: "clarify_bot_spinner_inner_container",
                             style: `
                                        {
                                         position: absolute;
@@ -360,7 +360,7 @@
                       },
                       spinnerText: {
                         type: "span",
-                        class: "content_insight_spinner_text",
+                        class: "clarify_bot_spinner_text",
                         style: `
                                    {
                                     position: absolute;
@@ -459,10 +459,10 @@
         e.stopPropagation();
       }
       if (e.key && e.key !== "Enter") return;
-      const question = getElement(".content_insight_question_input").value;
+      const question = getElement(".clarify_bot_question_input").value;
       if (!question) return;
       const completionsURL = backendURL + "/api/v1/getCompletion";
-      getElement(".content_insight_spinner_backdrop").style.setProperty(
+      getElement(".clarify_bot_spinner_backdrop").style.setProperty(
         "display",
         "flex"
       );
@@ -478,15 +478,15 @@
         }),
       }).then((res) => res.json());
 
-      getElement(".content_insight_ask_button").style.setProperty(
+      getElement(".clarify_bot_ask_button").style.setProperty(
         "display",
         "none"
       );
-      getElement(".content_insight_spinner_backdrop").style.setProperty(
+      getElement(".clarify_bot_spinner_backdrop").style.setProperty(
         "display",
         "none"
       );
-      getElement(".content_insight_response_block").textContent = response;
+      getElement(".clarify_bot_response_block").textContent = response;
       console.log("question : ", question, "\n", "response : ", response);
     }
 
@@ -497,11 +497,11 @@
 
       shadowDOM.append(styleTag);
       shadowDOM.append(...assembleWidget(elements));
-      console.log("%ccontent_insight script is loaded.", "color: green");
+      console.log("%cclarify_bot script is loaded.", "color: green");
     }
 
     init();
   } catch (error) {
-    console.error("content_insight script loading failed.", error);
+    console.error("clarify_bot script loading failed.", error);
   }
 })();
