@@ -2,7 +2,7 @@
   try {
     // Getting user settings from the data-attributes of the <script> tag.
     const scriptSettings = document.querySelector(
-      "#content_insight_widget"
+      "#clarify_bot_widget"
     )?.dataset; // Attributes name - lowercase.
     const projectId = scriptSettings.projectid; // projectid data.
     const userId = scriptSettings.userid; // projectid data.
@@ -11,7 +11,7 @@
 
     // Creating shadow root div wrapper for styles isolation.
     const shadowRootWrapper = document.createElement("div");
-    shadowRootWrapper.setAttribute("id", "content_insight_widget_wrapper");
+    shadowRootWrapper.setAttribute("id", "clarify_bot_widget_wrapper");
     shadowRootWrapper.setAttribute(
       "style",
       "position: absolute; z-index: 10000;"
@@ -67,7 +67,7 @@
     const elements = {
       chatPopup: {
         type: "div",
-        class: "content_insight_chat_popup",
+        class: "clarify_bot_chat_popup",
         style: `
       { 
            position: fixed;
@@ -86,7 +86,7 @@
            box-shadow: 2px 2px 5px 1px black;
          }
 
-         .content_insight_chat_popup.closed {
+         .clarify_bot_chat_popup.closed {
           width: 60px;
           height: 30px;
          }
@@ -94,7 +94,7 @@
         children: {
           header: {
             type: "div",
-            class: "content_insight_header",
+            class: "clarify_bot_header",
             innerHTML: "Help",
             style: ` 
         {
@@ -114,7 +114,7 @@
             children: {
               toggleButton: {
                 type: "button",
-                class: "content_insight_toggle-button",
+                class: "clarify_bot_toggle-button",
                 innerHTML: "_",
                 title: "open / close",
                 eventListeners: [
@@ -122,10 +122,10 @@
                     type: "click",
                     func: () => {
                       const toggleButtonRef = getElement(
-                        ".content_insight_toggle-button"
+                        ".clarify_bot_toggle-button"
                       );
                       const popupRef = getElement(
-                        ".content_insight_chat_popup"
+                        ".clarify_bot_chat_popup"
                       );
                       popupRef.classList.toggle("closed");
                       toggleButtonRef.style = popupRef.classList.contains(
@@ -149,7 +149,7 @@
               cursor: pointer;
             }
 
-            .content_insight_chat_popup.closed .content_insight_toggle-button{
+            .clarify_bot_chat_popup.closed .clarify_bot_toggle-button{
               font-size: 2em;
              }
             `,
@@ -158,7 +158,7 @@
           },
           content: {
             type: "div",
-            class: "content_insight_content",
+            class: "clarify_bot_content",
             style: `
           {
            position: relative;
@@ -170,7 +170,7 @@
             children: {
               inputWrapper: {
                 type: "div",
-                class: "content_insight_input_wrapper",
+                class: "clarify_bot_input_wrapper",
                 style: ` 
               {
                 display: flex;
@@ -181,13 +181,13 @@
                 background-color: white;
                 border: 1px solid grey;
               }
-              .content_insight_input_wrapper button {
+              .clarify_bot_input_wrapper button {
                 border: none;
                 background-color: transparent;
                 padding: 0;
                 cursor: pointer;
               }
-              .content_insight_input_wrapper input {
+              .clarify_bot_input_wrapper input {
                 flex-grow: 1;
                 border: none;
                 outline: none;
@@ -221,7 +221,7 @@
                   },
                   questionInput: {
                     type: "input",
-                    class: "content_insight_question_input",
+                    class: "clarify_bot_question_input",
                     placeholder: "How can we help?",
                     style: `{background-color: transparent;}`,
                     eventListeners: [
@@ -230,12 +230,12 @@
                   },
                   clearButton: {
                     type: "button",
-                    class: "content_insight_clear_button",
+                    class: "clarify_bot_clear_button",
                     eventListeners: [
                       {
                         type: "click",
                         func: () => {
-                          getElement(".content_insight_question_input").value =
+                          getElement(".clarify_bot_question_input").value =
                             "";
                           getElement(
                             ".content_insight_response_block"
