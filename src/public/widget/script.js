@@ -1,12 +1,11 @@
 (async () => {
   try {
     // Getting user settings from the data-attributes of the <script> tag.
-    const scriptSettings = document.querySelector(
-      "#clarify_bot_widget"
-    )?.dataset; // Attributes name - lowercase.
-    const projectId = scriptSettings.projectid; // projectid data.
-    const userId = scriptSettings.userid; // projectid data.
-    const backendURL = scriptSettings.backendurl; // backend address.
+    const {
+      projectid: projectId,
+      userid: userId,
+      backendurl: backendURL,
+    } = document.querySelector("#clarify_bot_widget")?.dataset; // data-attributes names autoconverted in DOM to lowercase.
     const customStyles = await getWidgetStyles(); // custom style properties.
 
     // Creating shadow root div wrapper for styles isolation.
@@ -14,7 +13,7 @@
     shadowRootWrapper.setAttribute("id", "clarify_bot_widget_wrapper");
     shadowRootWrapper.setAttribute(
       "style",
-      "position: absolute; z-index: 10000;"
+      "position: absolute; z-index: 10000; overflow: hidden;"
     );
     const shadowDOM = shadowRootWrapper.attachShadow({
       mode: "open",
@@ -124,9 +123,7 @@
                       const toggleButtonRef = getElement(
                         ".clarify_bot_toggle-button"
                       );
-                      const popupRef = getElement(
-                        ".clarify_bot_chat_popup"
-                      );
+                      const popupRef = getElement(".clarify_bot_chat_popup");
                       popupRef.classList.toggle("closed");
                       toggleButtonRef.style = popupRef.classList.contains(
                         "closed"
@@ -225,7 +222,7 @@
                     placeholder: "How can we help?",
                     style: `{background-color: transparent;}`,
                     eventListeners: [
-                      { type: "keydown", func: sendQuestionRequest },
+                      { type: "keydown", func: renderFinalResponse },
                     ],
                   },
                   clearButton: {
@@ -235,10 +232,11 @@
                       {
                         type: "click",
                         func: () => {
-                          getElement(".clarify_bot_question_input").value =
+                          getElement(".clarify_bot_question_input").value = "";
+                          getElement(".clarify_bot_response_block").innerHTML =
                             "";
                           getElement(
-                            ".clarify_bot_response_block"
+                            ".clarify_bot_additional_content"
                           ).innerHTML = "";
                           getElement(
                             ".clarify_bot_ask_button"
@@ -274,7 +272,7 @@
                 title: "Send question request",
                 class: "clarify_bot_ask_button",
                 innerHTML: "Ask!",
-                eventListeners: [{ type: "click", func: sendQuestionRequest }],
+                eventListeners: [{ type: "click", func: renderFinalResponse }],
               },
 
               responseBlock: {
@@ -287,6 +285,11 @@
                 overflow-y: auto;
               }
               `,
+              },
+
+              additionalContent: {
+                type: "div",
+                class: "clarify_bot_additional_content",
               },
 
               spinner: {
@@ -383,6 +386,7 @@
       },
     };
 
+    /** Getting widget style settings for this user. */
     async function getWidgetStyles() {
       const widgetStyles = await fetch(backendURL + "/widget/getWidgetStyles", {
         method: "POST",
@@ -399,6 +403,64 @@
       return widgetStyles;
     }
 
+    /** Getting Clarify backend (openAI) response. */
+    async function getClarifyResponse(question) {
+      const completionsURL = backendURL + "/api/v1/getCompletion";
+      const { response } = await fetch(completionsURL, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          projectId,
+          question,
+        }),
+      }).then((res) => res.json());
+
+      return response;
+    }
+
+    /** Getting any extra user content via user callback. */
+    async function getAdditionalContent(question) {
+      let contentCb = window.clarify_bot_addContent_cb;
+      try {
+        return await contentCb(question);
+      } catch (e) {
+        console.error(
+          "Failed to fetch additional content for clarify_bot : ",
+          e.message
+        );
+      }
+    }
+
+    /** Waiting for all the responses - clarify backend and any user callback triggered on request,
+     * and rendering all the resulting content at once.
+     */
+    async function renderFinalResponse(e) {
+      const question = getElement(".clarify_bot_question_input").value;
+      // Need these for correct work in shadowDOM.
+      if (e.key === "Backspace" || e.key === "Delete") e.stopPropagation();
+      if ((e.key && e.key !== "Enter") || !question) return;
+
+      const spinnerRef = getElement(".clarify_bot_spinner_backdrop");
+
+      spinnerRef.style.setProperty("display", "flex");
+      const [clarify_response, additional_content] = await Promise.allSettled([
+        getClarifyResponse(question),
+        getAdditionalContent(question),
+      ]);
+
+      getElement(".clarify_bot_response_block").textContent =
+        clarify_response.value || "";
+      getElement(".clarify_bot_additional_content").innerHTML =
+        additional_content.value || "";
+      spinnerRef.style.setProperty("display", "none");
+      getElement(".clarify_bot_ask_button").style.setProperty(
+        "display",
+        "none"
+      );
+    }
     /** Query elements from inside of the shadowDOM. */
     function getElement(filter) {
       return shadowRootWrapper.shadowRoot.querySelector(filter);
@@ -453,50 +515,13 @@
       return elements;
     }
 
-    async function sendQuestionRequest(e) {
-      // Need these for correct work in shadowDOM.
-      if (e.key === "Backspace" || e.key === "Delete") {
-        e.stopPropagation();
-      }
-      if (e.key && e.key !== "Enter") return;
-      const question = getElement(".clarify_bot_question_input").value;
-      if (!question) return;
-      const completionsURL = backendURL + "/api/v1/getCompletion";
-      getElement(".clarify_bot_spinner_backdrop").style.setProperty(
-        "display",
-        "flex"
-      );
-      const { response } = await fetch(completionsURL, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          projectId,
-          question,
-        }),
-      }).then((res) => res.json());
-
-      getElement(".clarify_bot_ask_button").style.setProperty(
-        "display",
-        "none"
-      );
-      getElement(".clarify_bot_spinner_backdrop").style.setProperty(
-        "display",
-        "none"
-      );
-      getElement(".clarify_bot_response_block").textContent = response;
-      console.log("question : ", question, "\n", "response : ", response);
-    }
-
+    /** Widget initialization.  */
     function init() {
       if (!projectId) throw Error("Missing projectId.");
       if (!userId) throw Error("Missing userId.");
       if (!Boolean(new URL(backendURL))) throw Error("Incorrect backendURL.");
 
-      shadowDOM.append(styleTag);
-      shadowDOM.append(...assembleWidget(elements));
+      shadowDOM.append(styleTag, ...assembleWidget(elements));
       console.log("%cclarify_bot script is loaded.", "color: green");
     }
 

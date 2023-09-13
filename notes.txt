@@ -9,3 +9,10 @@
   
   - when using file paths that use ** on mac or linux machines, use curly bracers - 
     "copy-files": "copyfiles -u 1 \"src/public/**\" build/",
+
+  - adding any additional content to the query result by user. 
+     Any additional content will be rendered in the widget below the response, that was obtained from the clarify bot backend itself.
+     The additional content should be passed as the syncronous or async callback, which resolves with valid HTML code, with inline styles.
+     This callback gets the only argument as it is being called on the query from the widget - it is the actual user query.
+
+     
