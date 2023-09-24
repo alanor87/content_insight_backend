@@ -79,18 +79,18 @@ app.use((req, res) => {
 /** Errors handler */
 app.use(errorHandler);
 
-setInterval(() => {
-  const memoryUsage = process.memoryUsage();
-  console.log(
-    "Initial RSS (Resident Set Size):",
-    memoryUsage.rss / (1024 * 1024),
-    "MB"
-  );
-  console.log(
-    "Initial Heap Total:",
-    memoryUsage.heapTotal / (1024 * 1024),
-    "MB"
-  );
-}, 5000);
+// setInterval(() => {
+//   const memoryUsage = process.memoryUsage();
+//   console.log(
+//     "Initial RSS (Resident Set Size):",
+//     memoryUsage.rss / (1024 * 1024),
+//     "MB"
+//   );
+//   console.log(
+//     "Initial Heap Total:",
+//     memoryUsage.heapTotal / (1024 * 1024),
+//     "MB"
+//   );
+// }, 5000);
 
 export { app };
