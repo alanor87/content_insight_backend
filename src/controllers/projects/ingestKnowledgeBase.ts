@@ -1,10 +1,6 @@
 import { Response, NextFunction } from "express";
-import {
-  FilesUploadtempStorageType,
-  RequestUserIdType,
-} from "@/types/common";
-
-let filesUploadRequestData: FilesUploadtempStorageType = {};
+import { uploadedFilesCache, generateId } from "@/utils";
+import { RequestUserIdType } from "@/types/common";
 
 async function ingestKnowledgeBase(
   req: RequestUserIdType,
@@ -12,22 +8,18 @@ async function ingestKnowledgeBase(
   next: NextFunction
 ) {
   try {
-    //Getting the incoming data and files.
-    const files = req.files as Express.Multer.File[];
+    const files = req.files as Express.Multer.File[];                               // Getting the incoming data and files.
     const { userId = "" } = req;
     const { projectId = "", projectName = "" } = req.body;
 
-    // Create the structure for filesUploadRequestData
-    if (!filesUploadRequestData[userId]) {
-      filesUploadRequestData[userId] = {};
-    }
-
-    filesUploadRequestData[userId][projectId] = {
+    uploadedFilesCache.set(generateId(userId + projectId), {                        // Writing uploaded files to a temporary storage.
       files,
       userId,
       projectId,
       projectName,
-    };
+    });
+    
+    console.log(uploadedFilesCache.getStats());
 
     res.status(200).end();
   } catch (error: any) {
@@ -37,4 +29,3 @@ async function ingestKnowledgeBase(
 }
 
 export default ingestKnowledgeBase;
-export { filesUploadRequestData };

@@ -1,1 +1,0 @@
-"Editing or removing photos within Picaboo won't change the originals on your computer. They'll still be there, just as they were before you imported them into Picaboo."

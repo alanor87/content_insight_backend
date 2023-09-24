@@ -1,1 +1,0 @@
-"To delete a project from your library: Select your project in the library by clicking on it once. From the popup menu that appears next to the project, select the Delete option."

@@ -1,1 +1,0 @@
-"The base price of your book includes the first 20 pages. After that, there is an additional charge per page, depending on which book style and size you choose."

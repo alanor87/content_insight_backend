@@ -1,6 +1,5 @@
 import { Project } from "@/models";
 import { Request, Response, NextFunction } from "express";
-import { UserProjectType } from "@/types/common";
 
 async function getWidgetStyles(
   req: Request,

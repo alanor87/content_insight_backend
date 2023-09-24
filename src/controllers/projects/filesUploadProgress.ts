@@ -1,31 +1,35 @@
 import { Response, NextFunction } from "express";
-import { filesUploadRequestData } from "./ingestKnowledgeBase";
 import { pinecone } from "@/db/connect-pinecone";
 import { Project } from "@/models";
-import { textParser, createEmbeddings, generateId } from "@/utils";
-
-import { ProjectIngestedDataType, RequestUserIdType } from "@/types/common";
+import { textParser, createEmbeddings, uploadedFilesCache, generateId } from "@/utils";
 import { VectorOperationsApi } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch/apis/VectorOperationsApi";
-
 import { CHUNK_SIZE, OPENAI_EMBEDDING_MODEL } from "@/utils/constants";
+import { ProjectIngestedDataType, RequestUserIdType, UploadedFilesCacheType } from "@/types/common";
 
+
+/** SSE ednpoint for monitoring files ingestion process from the client.
+ * This endpoint is being hit right after client got 200 response for the ingestKnowledgeBase endpoint requests.
+ * The uploaded files are being saved to the temp storage cache there - and their ingestion starts on the client hitting this endpoint.
+ */
 async function filesUploadProgress(
   req: RequestUserIdType,
   res: Response,
   next: NextFunction
 ) {
+  const { userId, projectId, projectName } = req.query as Record<
+    string,
+    string
+  >;
+  const filesCacheId = generateId(userId + projectId);
+
   try {
-    const { userId, projectId, projectName } = req.query as Record<
-      string,
-      string
-    >;
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
-    if (!filesUploadRequestData[`${userId}`][`${projectId}`])
+    if (!uploadedFilesCache.get(filesCacheId)){
       res.write("event: ingestionError.\n");
-      res.write("data: project or user not found.\n\n");
+      res.write("data: project or user not found.\n\n");}
 
     res.on("close", () => {
       console.log("Closing SSE session.");
@@ -33,28 +37,22 @@ async function filesUploadProgress(
     });
 
     let index: VectorOperationsApi;
-    index = pinecone.Index("content-insight-1"); // This should be assigned to the variable, as the number of indexes will exceed one.
-
-    // Data on all the ingested files to be added to the project in mongoDB.
-    const projectIngestedData: ProjectIngestedDataType[] = [];
-
-    // Getting uploaded files from the temporary storage object.
-    const files = filesUploadRequestData[userId][projectId].files;
-    // Generating and upserting vectors for each of files.
-    for (let i = 0; i < files.length; i += 1) {
+    index = pinecone.Index("content-insight-1");                                     // This should be assigned to the variable, as the number of indexes will exceed one.
+    const projectIngestedData: ProjectIngestedDataType[] = [];                       // Data on all the ingested files to be added to the project in mongoDB.
+    const {files} = uploadedFilesCache.get(filesCacheId) as UploadedFilesCacheType;  // Getting uploaded files from the temporary storage object.
+    for (let i = 0; i < files.length; i += 1) {                                      // Generating and upserting vectors for each of files.
       const { originalname, size, buffer } = files[i];
       projectIngestedData.push({
         fileName: originalname,
         size: size / 1024 + " kb",
       });
 
-      // Cleaning up the file name.
-      const title = `${originalname
+      const title = `${originalname                                                   // Cleaning up the file name.
         .trim()
         .replaceAll(/^[\w,.!?']/g, " ")
         .toLowerCase()}`;
-      // Cleaning up the file text.
-      const text = buffer
+
+      const text = buffer                                                             // Cleaning up the file text.
         .toString("utf-8")
         .replaceAll(/^[\w!?']/g, " ")
         .replaceAll(/\n/g, " ")
@@ -65,8 +63,7 @@ async function filesUploadProgress(
       // So splitting each file to the chunks that are smaller, to avoid exceeding token number (CHUNK_SIZE - read details in constants.ts).
       const sections = textParser(text, CHUNK_SIZE);
 
-      // Getting the vector embeddings, generated with the openAI api.
-      const embeddingsRequests: Promise<{
+      const embeddingsRequests: Promise<{                                             // Getting the vector embeddings, generated with the openAI api.
         embeddings: number[][];
         usage: any;
       }>[] = sections.map((section) => {
@@ -98,8 +95,7 @@ async function filesUploadProgress(
       res.write(`data: ${originalname} upserted.\n\n`);
     }
 
-    // Writing ingested files info to the mongoDB.
-    const updatedProject = await Project.findByIdAndUpdate(
+    const updatedProject = await Project.findByIdAndUpdate(                           // Writing ingested files info to the mongoDB.
       projectId,
       { $push: { projectIngestedData: { $each: projectIngestedData } } },
       { new: true }
@@ -116,6 +112,11 @@ async function filesUploadProgress(
     console.log("Files upserting error");
     next(error.message);
   } 
+  finally {
+    console.log('Clearing the uploaded files cache.')
+    uploadedFilesCache.del(filesCacheId);
+    console.log(uploadedFilesCache.getStats());
+  }
 }
 
 export default filesUploadProgress;

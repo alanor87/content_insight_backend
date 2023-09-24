@@ -1,10 +1,7 @@
  - create hash based check for the duplicate files on the ingestion.
  - make good errors logging - and user alerting about those in widget.
  - create environment switch mechanism for dev\prod switching of env variables, such as the backend address etc, both for the front and the backend.
- - register a domain namу.
 
     - ctrl-c ctrl-v stuff, not working - suppose due to the shadowDOM thing.
-    - work on the prompt - so it would not say anyting beyond the context!
-   - add the widget functionality testing directly in the project page.
 
    - implement some kind of load balancing and ability to benchmark performance under different loads.

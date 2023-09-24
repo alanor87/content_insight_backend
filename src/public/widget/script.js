@@ -72,7 +72,8 @@
            position: fixed;
            bottom: 10px;
            right: 10px;
-           width: 330px;
+           width: 60px;
+           height: 30px;
            background-color: ${
              customStyles?.widgetBackgroundColor || "#f0f0f0"
            };
@@ -85,9 +86,11 @@
            box-shadow: 2px 2px 5px 1px black;
          }
 
-         .clarify_bot_chat_popup.closed {
-          width: 60px;
-          height: 30px;
+         .clarify_bot_chat_popup.open {    
+          display: flex;
+          flex-direction: column;
+          width: 350px;
+          height: auto;
          }
         `,
         children: {
@@ -124,12 +127,12 @@
                         ".clarify_bot_toggle-button"
                       );
                       const popupRef = getElement(".clarify_bot_chat_popup");
-                      popupRef.classList.toggle("closed");
+                      popupRef.classList.toggle("open");
                       toggleButtonRef.style = popupRef.classList.contains(
-                        "closed"
+                        "open"
                       )
-                        ? "width: 100%; opacity: 0"
-                        : "";
+                        ? "opacity: 1; width: auto;"
+                        : "opacity: 0; width: 100%;";
                     },
                   },
                 ],
@@ -139,16 +142,14 @@
               top: 0;
               right: 0;
               height: 100%;
+              width: 100%;
               padding: 0 11px;
               color: white;
               background-color: transparent;
               border: none;
               cursor: pointer;
+              opacity: 0;
             }
-
-            .clarify_bot_chat_popup.closed .clarify_bot_toggle-button{
-              font-size: 2em;
-             }
             `,
               },
             },
@@ -157,19 +158,23 @@
             type: "div",
             class: "clarify_bot_content",
             style: `
-          {
-           position: relative;
-           display: flex;
-           gap: 10px;
-           flex-wrap: wrap;
-           padding: 10px;
-          }`,
+            {
+              position: relative;
+              display: flex;
+              gap: 10px;
+              flex-wrap: wrap;
+              max-height: 60vh;
+              padding: 15px;
+              overflow-y: auto;
+             }`,
             children: {
               inputWrapper: {
                 type: "div",
                 class: "clarify_bot_input_wrapper",
                 style: ` 
               {
+                position: sticky;
+                top: 0;
                 display: flex;
                 gap: 5px;
                 width: 100%;
@@ -271,6 +276,9 @@
                 type: "button",
                 title: "Send question request",
                 class: "clarify_bot_ask_button",
+                style: `{
+                  cursor: pointer;
+                }`,
                 innerHTML: "Ask!",
                 eventListeners: [{ type: "click", func: renderFinalResponse }],
               },
@@ -291,92 +299,91 @@
                 type: "div",
                 class: "clarify_bot_additional_content",
               },
+            },
+          },
 
-              spinner: {
+          spinner: {
+            type: "div",
+            class: "clarify_bot_spinner_backdrop",
+            style: `
+      {
+        position: absolute;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+        z-index: 4;
+      }`,
+            children: {
+              spinnerContainerWrapper: {
                 type: "div",
-                class: "clarify_bot_spinner_backdrop",
+                class: "clarify_bot_spinner_container_wrapper",
                 style: `
-          {
-            position: absolute;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
-            z-index: 4;
-          }`,
+                 {
+                   position: absolute;
+                   top: 50%;
+                   left: 50%;
+                   transform: translate(-50%, -50%);
+                 }`,
                 children: {
-                  spinnerContainerWrapper: {
+                  spinnerContainer: {
                     type: "div",
-                    class: "clarify_bot_spinner_container_wrapper",
+                    class: "clarify_bot_spinner_container",
                     style: `
-                     {
-                       position: absolute;
-                       top: 50%;
-                       left: 50%;
-                       transform: translate(-50%, -50%);
-                     }`,
+                         {
+                          width: 20px;
+                          height: 20px;
+                          border-radius: 50%;
+                          background-color: ${
+                            customStyles?.widgetHeaderColor || "rgb(77, 23, 28)"
+                          };
+                          animation-name: shadowAnimation;
+                          animation-duration: 4s;
+                          animation-direction: alternate;
+                          animation-timing-function: ease-in-out;
+                          animation-iteration-count: infinite;
+                         }`,
                     children: {
-                      spinnerContainer: {
+                      spinnerInnerContainer: {
                         type: "div",
-                        class: "clarify_bot_spinner_container",
-                        style: `
-                             {
-                              width: 20px;
-                              height: 20px;
-                              border-radius: 50%;
-                              background-color: ${
-                                customStyles?.widgetHeaderColor ||
-                                "rgb(77, 23, 28)"
-                              };
-                              animation-name: shadowAnimation;
-                              animation-duration: 4s;
-                              animation-direction: alternate;
-                              animation-timing-function: ease-in-out;
-                              animation-iteration-count: infinite;
-                             }`,
-                        children: {
-                          spinnerInnerContainer: {
-                            type: "div",
-                            class: "clarify_bot_spinner_inner_container",
-                            style: `
-                                       {
-                                        position: absolute;
-                                        width: 20px;
-                                        height: 20px;
-                                        display: flex;
-                                        justify-content: center;
-                                        align-items: center;
-                                        border-radius: 50%;
-                                        animation-name: animationInner;
-                                        animation-duration: 4s;
-                                        animation-iteration-count: infinite;
-                                        animation-timing-function: ease-in-out;
-                                        pointer-events: none;
-                                       }`,
-                          },
-                        },
-                      },
-                      spinnerText: {
-                        type: "span",
-                        class: "clarify_bot_spinner_text",
+                        class: "clarify_bot_spinner_inner_container",
                         style: `
                                    {
                                     position: absolute;
-                                    top: 50%;
-                                    left: 50%;
-                                    font-weight: 600;
-                                    transform: translate(-50%, -50%);
-                                    white-space: nowrap;
-                                    user-select: none;
+                                    width: 20px;
+                                    height: 20px;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    border-radius: 50%;
+                                    animation-name: animationInner;
+                                    animation-duration: 4s;
+                                    animation-iteration-count: infinite;
+                                    animation-timing-function: ease-in-out;
+                                    pointer-events: none;
                                    }`,
-                        innerHTML: "thinking...",
                       },
                     },
+                  },
+                  spinnerText: {
+                    type: "span",
+                    class: "clarify_bot_spinner_text",
+                    style: `
+                               {
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                font-weight: 600;
+                                transform: translate(-50%, -50%);
+                                white-space: nowrap;
+                                user-select: none;
+                               }`,
+                    innerHTML: "thinking...",
                   },
                 },
               },
@@ -461,12 +468,12 @@
         "none"
       );
     }
-    /** Query elements from inside of the shadowDOM. */
+    /** Query elements from inside of the shadowDOM.*/
     function getElement(filter) {
       return shadowRootWrapper.shadowRoot.querySelector(filter);
     }
 
-    /** Assembly of widget DOM. */
+    /** Assembly of widget DOM.*/
     function assembleWidget(elementsList) {
       const elements = Object.entries(elementsList).map(([_, value]) => {
         const {
@@ -515,7 +522,7 @@
       return elements;
     }
 
-    /** Widget initialization.  */
+    /** Widget initialization.*/
     function init() {
       if (!projectId) throw Error("Missing projectId.");
       if (!userId) throw Error("Missing userId.");

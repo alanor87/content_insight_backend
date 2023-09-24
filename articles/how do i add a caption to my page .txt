@@ -1,1 +1,0 @@
-"In Edit mode, click on the+Textbutton in the top-left corner of the program window. Click on eitherAdd Caption to Left PageorAdd Caption to Right PageYou can then use the top handle to drag and drop the caption anywhere on the page.More information on Captions"

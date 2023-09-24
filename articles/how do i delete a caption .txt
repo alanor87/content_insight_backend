@@ -1,1 +1,0 @@
-"Click on the caption box you would like removed to select it. The Caption Tools bar will appear underneath the caption box. Click on the red circle on the far upper right of that bar to delete the caption box entirely.More information about Captions"

@@ -1,1 +1,0 @@
-"A “page” is one side of a sheet in your book - so a 20-page book is actually 10 sheets of paper. Page numbers are listed underneath the pages in Edit and Preview mode. The price for additional pages (over 20) varies by book size - you can view pricing here"

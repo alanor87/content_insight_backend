@@ -1,1 +1,0 @@
-"Each order has a single address associated with it. To ship projects to multiple addresses, separate orders will need to be placed for each address. View Shipping Prices here"

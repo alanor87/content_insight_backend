@@ -1,1 +1,0 @@
-"To turn on Grid Lines, click on the Advanced button in the upper right. You can then use the slider to change the grid size."

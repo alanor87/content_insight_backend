@@ -1,1 +1,0 @@
-"If you're signed into your account, your email address will be displayed in the upper right corner of the program window.Haven't created an account? If not, you'll instead see a prompt in the upper right to Sign Up.Clicking this will show a new popup window where you can then enter your information, so that your project can be saved.View our Picaboo User Manual"
