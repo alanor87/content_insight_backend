@@ -1,16 +1,9 @@
 import jwt from "jsonwebtoken";
-import { pinecone } from "@/db/connect-pinecone";
 import { User } from "@/models";
 import { getUser } from "@/utils";
 import { Request, Response, NextFunction } from "express";
 
 import { UserType } from "@/types/common";
-
-import {
-  OPENAI_OUTPUT_DIMENSIONS,
-  PINECONE_METRIC,
-  PINECONE_POD_TYPE,
-} from "@/utils/constants";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -27,7 +20,9 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     const { PROD_HOSTNAME, REGISTRATION_DEACTIVATED } = process.env;
 
+    console.log('prod should not allow register  :  ', PROD_HOSTNAME, REGISTRATION_DEACTIVATED );
     if (req.hostname === PROD_HOSTNAME && REGISTRATION_DEACTIVATED === "true") {
+      console.log('and it does not');
       res.status(403).json({
         status: "Temporary restricted.",
         message: "Registration is closed for now, but will be opened soon.",
