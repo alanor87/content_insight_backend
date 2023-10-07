@@ -25,6 +25,16 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       recaptchaValue,
     }: UserType & { recaptchaValue: string } = req.body;
 
+    const {PROD_HOSTNAME, REGISTRATION_DEACTIVATED} = process.env;
+
+    if(req.hostname === PROD_HOSTNAME && REGISTRATION_DEACTIVATED === 'true') {
+      res.status(403).json({
+        status: "Temporary restricted.",
+        message: "Registration is closed for now, but will be opened soon.",
+      });
+      return;
+    }
+
     // Checking if the user with this email exist.
     const userEmailDoesExist = await getUser({ userEmail: userEmail });
     if (userEmailDoesExist) {

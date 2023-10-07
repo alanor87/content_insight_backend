@@ -145,7 +145,7 @@ export default async function getRequestCompletion(
      * and from which it is going to formulate the answer.
      */
     const context = metadata?.map((data: any) => data.content).join(" ");
-    // console.log("[Pinecone query result for question keywords] : ", context);
+    console.log("[Pinecone query result for question keywords] : ", context);
 
     /** Here we formulate a concise question to the openAi completions endpoint, basically, now we are a user
      * that is asking a question to chatGPT - this is the best way to view what is happening.

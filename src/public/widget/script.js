@@ -446,8 +446,7 @@
      */
     async function renderFinalResponse(e) {
       const question = getElement(".clarify_bot_question_input").value;
-      // Need these for correct work in shadowDOM.
-      if (e.key === "Backspace" || e.key === "Delete") e.stopPropagation();
+      e.stopPropagation();
       if ((e.key && e.key !== "Enter") || !question) return;
 
       const spinnerRef = getElement(".clarify_bot_spinner_backdrop");
