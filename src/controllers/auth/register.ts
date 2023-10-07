@@ -25,9 +25,9 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       recaptchaValue,
     }: UserType & { recaptchaValue: string } = req.body;
 
-    const {PROD_HOSTNAME, REGISTRATION_DEACTIVATED} = process.env;
+    const { PROD_HOSTNAME, REGISTRATION_DEACTIVATED } = process.env;
 
-    if(req.hostname === PROD_HOSTNAME && REGISTRATION_DEACTIVATED === 'true') {
+    if (req.hostname === PROD_HOSTNAME && REGISTRATION_DEACTIVATED === "true") {
       res.status(403).json({
         status: "Temporary restricted.",
         message: "Registration is closed for now, but will be opened soon.",
@@ -46,21 +46,18 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     // Recaptcha user challenge result check.
-    await fetch(
+    const reCaptchaResponce = await fetch(
       `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaValue}`,
       { method: "POST" }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.success) {
-          res.status(409).json({
-            status: "Recaptcha failed",
-            message:
-              "Recaptcha validation failed :\n" + data["error-codes"],
-          });
-          return;
-        }
+    ).then((response) => response.json());
+    if (!reCaptchaResponce.success) {
+      res.status(409).json({
+        status: "Recaptcha failed",
+        message:
+          "Recaptcha validation failed :\n" + reCaptchaResponce["error-codes"],
       });
+      return;
+    }
 
     // Creating new user in mongoDB.
     const newUser = new User({ userEmail });
