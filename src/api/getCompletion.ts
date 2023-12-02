@@ -90,7 +90,7 @@ async function createQuestionContext({
   vector: number[];
 }) {
   try {
-    const response = await pinecone.Index("content-insight-1").query({
+    const response = await pinecone.Index("content-insight-1-index").query({
       queryRequest: {
         vector,
         filter: { projectId: { $eq: projectId } },

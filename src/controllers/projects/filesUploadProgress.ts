@@ -37,7 +37,7 @@ async function filesUploadProgress(
     });
 
     let index: VectorOperationsApi;
-    index = pinecone.Index("content-insight-1");                                     // This should be assigned to the variable, as the number of indexes will exceed one.
+    index = pinecone.Index("content-insight-1-index");                               // This should be assigned to the variable, as the number of indexes will exceed one.
     const projectIngestedData: ProjectIngestedDataType[] = [];                       // Data on all the ingested files to be added to the project in mongoDB.
     const {files} = uploadedFilesCache.get(filesCacheId) as UploadedFilesCacheType;  // Getting uploaded files from the temporary storage object.
     for (let i = 0; i < files.length; i += 1) {                                      // Generating and upserting vectors for each of files.
@@ -66,9 +66,7 @@ async function filesUploadProgress(
       const embeddingsRequests: Promise<{                                             // Getting the vector embeddings, generated with the openAI api.
         embeddings: number[][];
         usage: any;
-      }>[] = sections.map((section) => {
-        return createEmbeddings(section.content, OPENAI_EMBEDDING_MODEL);
-      });
+      }>[] = sections.map((section) => createEmbeddings(section.content, OPENAI_EMBEDDING_MODEL));
       const embeddingsResponses = await Promise.all(embeddingsRequests);
       const embeddings = embeddingsResponses.flatMap(
         (response) => response.embeddings

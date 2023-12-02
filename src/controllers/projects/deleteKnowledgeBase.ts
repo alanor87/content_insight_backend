@@ -13,7 +13,7 @@ async function deleteKnowledgeBase(
     const { userId } = req;
 
     await pinecone
-      .Index("content-insight-1")
+      .Index("content-insight-1-index")
       ._delete({ deleteRequest: { namespace: userId, filter: { projectId } } });
 
     // Deleting ingested files entries from the mongoDB.

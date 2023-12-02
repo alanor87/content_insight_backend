@@ -26,7 +26,7 @@ async function deleteProject(
 
     // Removing deleted project vectors from the pinecone DB.
     await pinecone
-      .Index("content-insight-1")
+      .Index("content-insight-1-index")
       ._delete({ deleteRequest: { namespace: userId, filter: { projectId } } });
 
     res.status(201).json(updatedUser?.userProjects);
