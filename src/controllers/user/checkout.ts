@@ -21,8 +21,9 @@ async function checkout(
       ],
       mode: "subscription",
       ui_mode: "embedded",
-      return_url: "http://localhost:3000/cabinet/billing/checkoutResult?session_id={CHECKOUT_SESSION_ID}",
+      return_url: `${req.headers.origin}/cabinet/billing/checkoutResult?session_id={CHECKOUT_SESSION_ID}`,
     });
+
 
     res.send({ clientSecret: session.client_secret });
   } catch (error: any) {
