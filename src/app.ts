@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import "module-alias/register";                                                     // this one is for the path alias resolution in the js runtime.
+import "module-alias/register"; // this one is for the path alias resolution in the js runtime.
 import path from "path";
 import express from "express";
 import cors from "cors";
@@ -23,40 +23,41 @@ const errorHandler: ErrorRequestHandler = (error, _, res, __) => {
   });
 };
 
+// Routes should be in order from less to the most permissive, 
+// if we are about to use an array of routes in a single app.use() middleware assignment.
+const commonRoutes = [
+  "/cabinet/settings",
+  "/cabinet/billing",
+  "/cabinet/stats",
+  "/cabinet/projects/:id",
+  "/cabinet/projects",
+  "/cabinet",
+  "/",
+];
+
 const allowedCorsOrigin =
   process.env.NODE_ENV === "development" ? "*" : "this is to figure out later";
 
-app.use(cors());                                                                    // for now a wildcard.
+app.use(cors()); // for now a wildcard.
 app.use(express.json());
 
+
+/** Widget endpoint */
 app.use("/widget", api.widget);
 
-/** Serving static react app to client, test mode for now, while still not sure if front and backend will be hosted separately or no. */
-app.use("/", express.static(path.join(process.cwd(), "build/public/app")));
+
+/** Static assets endpoints */
 app.use(
-  "/cabinet",
+  commonRoutes,
   express.static(path.join(process.cwd(), "build/public/app"))
 );
+// Separate one for the checkoutResult, Express does not want to pass the query string to the url
+// when you have route as folder rather tan a file.
 app.use(
-  "/cabinet/projects",
-  express.static(path.join(process.cwd(), "build/public/app"))
+  "/cabinet/billing/checkoutResult",
+  express.static(path.join(process.cwd(), "build/public/app/index.html"))
 );
-app.use(
-  "/cabinet/projects/:id",
-  express.static(path.join(process.cwd(), "build/public/app"))
-);
-app.use(
-  "/cabinet/stats",
-  express.static(path.join(process.cwd(), "build/public/app"))
-);
-app.use(
-  "/cabinet/billing",
-  express.static(path.join(process.cwd(), "build/public/app"))
-);
-app.use(
-  "/cabinet/settings",
-  express.static(path.join(process.cwd(), "build/public/app"))
-);
+
 
 /** API endpoints */
 app.use("/api/v1/auth", api.auth);
