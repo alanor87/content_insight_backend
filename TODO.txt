@@ -2,6 +2,11 @@
  - make good errors logging - and user alerting about those in widget.
  - create environment switch mechanism for dev\prod switching of env variables, such as the backend address etc, both for the front and the backend.
 
-    - ctrl-c ctrl-v stuff, not working - suppose due to the shadowDOM thing.
-
    - implement some kind of load balancing and ability to benchmark performance under different loads.
+
+
+- invoice payment and payment failed stripe events handlers.
+- delete subscription when deleting the project.
+- widget access refusal when the subscription is not active.
+
+stripe listen --forward-to localhost:3300/api/v1/webhooks/stripe -s

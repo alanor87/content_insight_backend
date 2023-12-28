@@ -44,11 +44,19 @@ const ProjectSchema = new Schema(
       widgetBorderRadius: {
         type: String,
         default: "5",
-      }
+      },
     },
     ownedByUserId: {
       type: Schema.Types.ObjectId,
       ref: "user",
+    },
+    subscription: {
+      id: { type: String },
+      isActive: {
+        type: Boolean,
+        default: false,
+      },
+      lastPaid: { type: Number },
     },
   },
   { versionKey: false, timeStamps: true }

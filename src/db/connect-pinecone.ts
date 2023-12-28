@@ -17,6 +17,7 @@ async function pineconeDBconnection() {
     environment: PINECONE_ENV,
     apiKey: PINECONE_API_KEY,
   });
+  
   console.log("Pinecone DB connection open.");
 }
 

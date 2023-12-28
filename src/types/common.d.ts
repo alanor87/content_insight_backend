@@ -9,6 +9,8 @@ type UserType = {
   userPassword?: string;
   userToken?: string;
   userProjects?: [UserProjectType];
+  userStripeCustomerId?: string;
+  userStripeCustomerEmail?: string;
 };
 
 type ProjectIngestedDataType = {
@@ -29,15 +31,20 @@ type UserProjectType = {
     widgetBorderWidth: string;
     widgetBorderRadius: string;
   };
+  subscription: {
+    id: string;
+    isActive: boolean;
+    lastPaid: Date;
+  };
 };
 
 type UploadedFilesCacheType = {
-      files: Express.Multer.File[];
-      userId: string;
-      projectId: string;
-      projectName: string;
-    };
- 
+  files: Express.Multer.File[];
+  userId: string;
+  projectId: string;
+  projectName: string;
+};
+
 export {
   RequestUserIdType,
   UserType,

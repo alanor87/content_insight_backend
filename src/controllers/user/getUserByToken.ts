@@ -10,7 +10,7 @@ async function getUserByToken(
   try {
     const user = await getUser({ _id: req.userId });
     if (!user) throw Error("User not found.");
-    const { userPassword, ...userDataToSend } = user.toObject();
+    const { userPassword, userStripeCustomerEmail, ...userDataToSend } = user.toObject();
     res.status(200).json({
       message: "User is logged in.",
       body: userDataToSend,

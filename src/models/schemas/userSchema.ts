@@ -21,6 +21,12 @@ const userSchema = new Schema(
         ref: "project",
       },
     ],
+    userStripeCustomerId: {
+      type: String,
+    },
+    userStripeCustomerEmail: {
+      type: String,
+    },
   },
   { versionKey: false, timeStamps: true }
 );

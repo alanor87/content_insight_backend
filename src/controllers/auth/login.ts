@@ -26,7 +26,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
     const { _id } = requestedUser;
     const userToken = jwt.sign({ _id }, SECRET_KEY, {
-      expiresIn: "1h",
+      expiresIn: "3h",
     });
     requestedUser.userToken = userToken;
     const userWithToken = await requestedUser.save();

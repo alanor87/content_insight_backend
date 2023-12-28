@@ -1,0 +1,24 @@
+import { Project } from "@/models";
+
+/** Removal of the stripe subscription data for the current user from DB. */
+async function deleteProjectSubscriptionData(subscriptionId: string) {
+  try {
+    const project = await Project.findOne({
+      "subscription.id": subscriptionId,
+    });
+
+    // Removing subscription data from the object.
+    await project?.updateOne({
+      subscription: {
+        id: "",
+        isActive: false,
+        lastPaid: "",
+      },
+    });
+
+  } catch (error: any) {
+    console.log("Error deleting subscription data : ", error.message);
+  }
+}
+
+export default deleteProjectSubscriptionData;
