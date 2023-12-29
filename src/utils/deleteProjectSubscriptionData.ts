@@ -1,6 +1,8 @@
 import { Project } from "@/models";
 
-/** Removal of the stripe subscription data for the current user from DB. */
+/** Removal of the stripe subscription data for the current user from DB.
+ * For the case when user removes the subscription for the current project.
+ */
 async function deleteProjectSubscriptionData(subscriptionId: string) {
   try {
     const project = await Project.findOne({
@@ -15,7 +17,6 @@ async function deleteProjectSubscriptionData(subscriptionId: string) {
         lastPaid: "",
       },
     });
-
   } catch (error: any) {
     console.log("Error deleting subscription data : ", error.message);
   }

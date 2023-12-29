@@ -69,8 +69,20 @@ async function stripe(req: Request, res: Response) {
         });
         break;
       }
+
       case "invoice.paid": {
+        // Subscription for the project is paid, making it active.
         console.log("invoice.paid" + " : \n", event.data.object);
+        const { subscription, created } = event.data.object;
+        await Project.findOneAndUpdate(
+          { subscription: { id: subscription } },
+          {
+            subscription: {
+              isActive: true,
+              lastPaid: created * 1000, // Stripe gives dates in the unix timestamp, need to  * 1000.
+            },
+          }
+        );
         break;
       }
 
@@ -78,6 +90,16 @@ async function stripe(req: Request, res: Response) {
         // The payment failed or the customer does not have a valid payment method.
         // The subscription becomes past_due. Notify your customer and send them to the
         // customer portal to update their payment information.
+        console.log("invoice.payment_failed" + " : \n", event.data.object);
+        const { subscription } = event.data.object;
+        await Project.findOneAndUpdate(
+          { subscription: { id: subscription } },
+          {
+            subscription: {
+              isActive: false,
+            },
+          }
+        );
         break;
 
       case "customer.subscription.deleted": {
@@ -89,6 +111,7 @@ async function stripe(req: Request, res: Response) {
         break;
     }
   } catch (error: any) {
+    console.log("Error on stripe webhook : ", error.message);
   } finally {
     // Return a response to acknowledge receipt of the event
     res.json({ received: true });

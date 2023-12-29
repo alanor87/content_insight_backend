@@ -12,7 +12,7 @@ async function deleteProject(
     const { userId } = req;
     const { projectId }: { projectId: string } = req.body;
 
-    // Removing project from mongoDB.
+    // Removing project from DB.
     await Project.findByIdAndDelete(projectId);
 
     // Removing deleted projectId entry from the user DB entry.

@@ -10,7 +10,7 @@
     "clear": "rimraf ./build",
     "copy-files": "copyfiles -u 1 \"src/public/**\" build/",
     "build": "npm run clear && tsc && npm run copy-files",
-    "start": "node --inspect build/bin/server.js",
+    "start": "node launchStripeCli.mjs && node --inspect build/bin/server.js ",
     "bs": "npm run build && npm run start"
   },
   "keywords": [],
@@ -27,6 +27,7 @@
     "@types/multer": "^1.4.7",
     "@types/node": "^20.2.1",
     "copyfiles": "^2.4.1",
+    "ps-list": "^8.1.1",
     "rimraf": "^5.0.1",
     "typescript": "^5.1.6"
   },
