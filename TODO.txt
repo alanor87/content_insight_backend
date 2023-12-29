@@ -5,8 +5,9 @@
    - implement some kind of load balancing and ability to benchmark performance under different loads.
 
 
-- invoice payment and payment failed stripe events handlers.
+----- test invoice payment and payment failed stripe events handlers.
 - delete subscription when deleting the project.
-- widget access refusal when the subscription is not active.
+- make the getCompletion accessible for the demoWidget in the clients project settings.
+- change the user accessible widget code snippet in the project settings - backend url.
 
 stripe listen --forward-to localhost:3300/api/v1/webhooks/stripe -s

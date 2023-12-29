@@ -2,11 +2,14 @@ import { spawn } from "child_process";
 import psList from "ps-list";
 import * as dotenv from "dotenv";
 
+/** Launching the stripe cli for the webhooks local test,
+ *  for the development mode only. */
+
 (async () => {
   dotenv.config();
   const { NODE_ENV } = process.env;
   if (NODE_ENV === "production") return;
-  
+
   try {
     // Get the list of running processes
     const processes = await psList();

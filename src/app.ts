@@ -4,7 +4,7 @@ import path from "path";
 import express from "express";
 import cors from "cors";
 import * as api from "@/api";
-import { tokenValidation } from "./middleware";
+import { subscriptionCheck, tokenValidation } from "./middleware";
 import { filesUploadProgress } from "./controllers/projects";
 
 import type { ErrorRequestHandler } from "express";
@@ -48,7 +48,7 @@ app.use("/api/v1/webhooks", express.raw({ type: 'application/json' }), api.webho
 app.use(express.json());
 
 /** Widget endpoint */
-app.use("/widget", api.widget);
+app.use("/widget", subscriptionCheck, api.widget);
 
 /** Static assets endpoints */
 app.use(
@@ -68,7 +68,8 @@ app.use("/api/v1/user", tokenValidation, api.user);
 app.use("/api/v1/projects", tokenValidation, api.projects);
 
 app.get("/api/v1/filesUploadProgress", filesUploadProgress);
-app.use("/api/v1/getCompletion", api.getCompletion); // no token validation for now for testing purposes
+// no token validation for now for testing purposes, checking if the subscription is active.
+app.use("/api/v1/getCompletion", subscriptionCheck, api.getCompletion); 
 
 
 /** 404 handler */
