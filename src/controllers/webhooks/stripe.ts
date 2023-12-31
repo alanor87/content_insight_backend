@@ -70,9 +70,8 @@ async function stripe(req: Request, res: Response) {
         break;
       }
 
+      // Subscription for the project is paid, making it active.
       case "invoice.paid": {
-        // Subscription for the project is paid, making it active.
-        console.log("invoice.paid" + " : \n", event.data.object);
         const { subscription, created } = event.data.object;
         await Project.findOneAndUpdate(
           { subscription: { id: subscription } },
@@ -86,10 +85,10 @@ async function stripe(req: Request, res: Response) {
         break;
       }
 
+      // The payment failed or the customer does not have a valid payment method.
+      // The subscription becomes past_due. Notify your customer and send them to the
+      // customer portal to update their payment information.
       case "invoice.payment_failed":
-        // The payment failed or the customer does not have a valid payment method.
-        // The subscription becomes past_due. Notify your customer and send them to the
-        // customer portal to update their payment information.
         console.log("invoice.payment_failed" + " : \n", event.data.object);
         const { subscription } = event.data.object;
         await Project.findOneAndUpdate(
@@ -102,6 +101,7 @@ async function stripe(req: Request, res: Response) {
         );
         break;
 
+      // Fires when the client cancells the subscription from the portal, or when he deletes the project.
       case "customer.subscription.deleted": {
         const { id } = event.data.object;
         await deleteProjectSubscriptionData(id);

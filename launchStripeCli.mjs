@@ -31,7 +31,6 @@ import * as dotenv from "dotenv";
       ]; // Command to execute in the new window
 
       const child = spawn(command, args, {
-        shell: true,
         detached: true,
         stdio: "inherit",
       });

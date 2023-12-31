@@ -18,10 +18,10 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       recaptchaValue,
     }: UserType & { recaptchaValue: string } = req.body;
 
-    const { PROD_HOSTNAME, REGISTRATION_DEACTIVATED } = process.env;
+    const { BASE_URL, REGISTRATION_DEACTIVATED } = process.env;
 
-    console.log('prod should not allow register  :  ', PROD_HOSTNAME, REGISTRATION_DEACTIVATED );
-    if (req.hostname === PROD_HOSTNAME && REGISTRATION_DEACTIVATED === "true") {
+    console.log('prod should not allow register  :  ', BASE_URL, REGISTRATION_DEACTIVATED );
+    if (req.get('Origin') === BASE_URL && REGISTRATION_DEACTIVATED === "true") {
       console.log('and it does not');
       res.status(403).json({
         status: "Temporary restricted.",

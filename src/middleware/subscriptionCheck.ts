@@ -1,5 +1,9 @@
 import { Project } from "@/models";
 import { Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
+dotenv.config();
+
+const { BASE_URL } = process.env;
 
 /** Checking subscription for current projectId. Getting projectId from query string -
  *  when loading the widget script, and body for the styles and getCompletions.
@@ -10,17 +14,25 @@ async function subscriptionCheck(
   res: Response,
   next: NextFunction
 ) {
-  const projectId = req.body.projectId || req.query.projectId;
-  const project = await Project.findById(projectId);
-  if (!project?.subscription?.isActive) {
-    res
-      .status(403)
-      .json(
-        {message : "Subscription is disactivated, please renew the subscription or contact the support"}
-      );
-    return;
+  try {
+    console.log(req.get("Origin"), BASE_URL);
+    if (req.get("Origin") === BASE_URL) {
+      next();
+      return;
+    }
+    const projectId = req.body.projectId || req.query.projectId;
+    const project = await Project.findById(projectId);
+    if (!project?.subscription?.isActive) {
+      res.status(403).json({
+        message:
+          "Subscription is disactivated, please renew the subscription or contact the support",
+      });
+      return;
+    }
+    next();
+  } catch (error: any) {
+    next(error);
   }
-  next();
 }
 
 export default subscriptionCheck;

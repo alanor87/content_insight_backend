@@ -6,7 +6,6 @@
 
 
 ----- test invoice payment and payment failed stripe events handlers.
-- delete subscription when deleting the project.
 - make the getCompletion accessible for the demoWidget in the clients project settings.
 - change the user accessible widget code snippet in the project settings - backend url.
 
