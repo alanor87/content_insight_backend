@@ -49,12 +49,12 @@ async function filesUploadProgress(
 
       const title = `${originalname                                                   // Cleaning up the file name.
         .trim()
-        .replaceAll(/^[\w,.!?']/g, " ")
+        .replaceAll(/[^\w,.!?]/g, " ")
         .toLowerCase()}`;
 
       const text = buffer                                                             // Cleaning up the file text.
         .toString("utf-8")
-        .replaceAll(/^[\w!?']/g, " ")
+        .replaceAll(/[^\w!?, ]/g, " ")
         .replaceAll(/\n/g, " ")
         .replaceAll(/  +/g, " ")
         .toLowerCase();

@@ -1,10 +1,10 @@
 import { Response, NextFunction } from "express";
-import Stripe from "stripe";
 import { pinecone } from "@/db/connect-pinecone";
 import { User, Project } from "@/models";
+import { getStripeInstance } from "@/utils";
 import { RequestUserIdType } from "@/types/common";
 
-const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY_TEST || "");
+const stripeInstance = getStripeInstance()
 
 async function deleteProject(
   req: RequestUserIdType,

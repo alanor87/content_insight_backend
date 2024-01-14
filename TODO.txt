@@ -2,11 +2,10 @@
  - make good errors logging - and user alerting about those in widget.
  - create environment switch mechanism for dev\prod switching of env variables, such as the backend address etc, both for the front and the backend.
 
-   - implement some kind of load balancing and ability to benchmark performance under different loads.
+ - implement some kind of load balancing and ability to benchmark performance under different loads.
+ - lowercase all the user prompt?
 
 
 ----- test invoice payment and payment failed stripe events handlers.
-- make the getCompletion accessible for the demoWidget in the clients project settings.
-- change the user accessible widget code snippet in the project settings - backend url.
 
 stripe listen --forward-to localhost:3300/api/v1/webhooks/stripe -s

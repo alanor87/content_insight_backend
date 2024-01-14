@@ -1,13 +1,20 @@
 import { Request, Response } from "express";
-import Stripe from "stripe";
 import { Project, User } from "@/models";
-import { deleteProjectSubscriptionData, getUser } from "@/utils";
+import {
+  deleteProjectSubscriptionData,
+  getUser,
+  getStripeInstance,
+} from "@/utils";
 import dotenv from "dotenv";
 dotenv.config();
 
-const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY_TEST || "");
+const stripeInstance = getStripeInstance();
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_KEY_TEST || "";
+const { NODE_ENV, STRIPE_WEBHOOK_KEY_PROD, STRIPE_WEBHOOK_KEY_TEST } =
+  process.env;
+
+const endpointSecret =
+  NODE_ENV === "production" ? STRIPE_WEBHOOK_KEY_PROD : STRIPE_WEBHOOK_KEY_TEST;
 
 /** Stripe events listener webhook. */
 async function stripe(req: Request, res: Response) {
@@ -19,7 +26,7 @@ async function stripe(req: Request, res: Response) {
     event = stripeInstance.webhooks.constructEvent(
       req.body,
       sig,
-      endpointSecret
+      endpointSecret || ""
     );
   } catch (err: any) {
     res.status(400).send(`Webhook Error: ${err.message}`);

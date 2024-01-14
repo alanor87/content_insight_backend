@@ -12,6 +12,7 @@ import type { ErrorRequestHandler } from "express";
 dotenv.config();
 
 const app = express();
+app.disable('x-powered-by');
 
 const errorHandler: ErrorRequestHandler = (error, _, res, __) => {
   const { code = 500, message = "Server error." } = error;

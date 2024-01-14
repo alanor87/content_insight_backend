@@ -15,7 +15,8 @@ async function subscriptionCheck(
   next: NextFunction
 ) {
   try {
-    console.log(req.get("Origin"), BASE_URL);
+    // If this is a call from the demo widget in the client cabinet - let it through,
+    // here the completions are available for the demo purposes without active subscription.
     if (req.get("Origin") === BASE_URL) {
       next();
       return;

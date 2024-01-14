@@ -1,8 +1,10 @@
-import Stripe from "stripe";
-import { RequestUserIdType } from "@/types/common";
 import { NextFunction, Response } from "express";
+import { getStripeInstance } from "@/utils";
+import { RequestUserIdType } from "@/types/common";
+import dotenv from "dotenv";
+dotenv.config();
 
-const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY_TEST || "");
+const stripeInstance = getStripeInstance()
 
 async function stripeCustomerPortal(
   req: RequestUserIdType,
