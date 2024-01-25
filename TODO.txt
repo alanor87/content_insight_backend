@@ -1,6 +1,5 @@
  - create hash based check for the duplicate files on the ingestion.
  - make good errors logging - and user alerting about those in widget.
- - create environment switch mechanism for dev\prod switching of env variables, such as the backend address etc, both for the front and the backend.
 
  - implement some kind of load balancing and ability to benchmark performance under different loads.
  - lowercase all the user prompt?
