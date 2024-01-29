@@ -57,6 +57,7 @@ const ProjectSchema = new Schema(
         default: false,
       },
       lastPaid: { type: Number },
+      stripeMode: {type: String}
     },
   },
   { versionKey: false, timeStamps: true }

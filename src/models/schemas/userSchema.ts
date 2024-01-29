@@ -27,6 +27,7 @@ const userSchema = new Schema(
     userStripeCustomerEmail: {
       type: String,
     },
+    stripeMode: { type: String },
   },
   { versionKey: false, timeStamps: true }
 );
