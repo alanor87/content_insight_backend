@@ -31,8 +31,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "ps-list": "^8.1.1",
-    "@pinecone-database/pinecone": "^0.1.6",
+    "@pinecone-database/pinecone": "^2.0.0",
     "@types/papaparse": "^5.3.7",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -44,6 +43,8 @@
     "multer": "^1.4.5-lts.1",
     "node-cache": "^5.1.2",
     "openai": "^3.3.0",
-    "stripe": "^14.5.0"
+    "ps-list": "^8.1.1",
+    "stripe": "^14.5.0",
+    "tesseract.js": "^5.0.5"
   }
 }

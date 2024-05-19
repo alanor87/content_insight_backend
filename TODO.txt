@@ -2,6 +2,7 @@
  - make good errors logging - and user alerting about those in widget.
 
  - implement some kind of load balancing and ability to benchmark performance under different loads.
+ 
  - lowercase all the user prompt?
 
 

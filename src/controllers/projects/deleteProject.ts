@@ -4,7 +4,7 @@ import { User, Project } from "@/models";
 import { getStripeInstance } from "@/utils";
 import { RequestUserIdType } from "@/types/common";
 
-const stripeInstance = getStripeInstance()
+const stripeInstance = getStripeInstance();
 
 async function deleteProject(
   req: RequestUserIdType,
@@ -12,17 +12,25 @@ async function deleteProject(
   next: NextFunction
 ) {
   try {
-    const { userId } = req;
+    const { userId = "" } = req;
     const { projectId }: { projectId: string } = req.body;
 
     const projectToDelete = await Project.findById(projectId);
 
+    if (!projectToDelete)
+      throw Error("Project with id " + projectId + "not found.");
+
     // Deleting subscription from Stripe, if the project has the subscription.
-    if (projectToDelete?.subscription?.id) {
-      await stripeInstance.subscriptions.cancel(
+    if (projectToDelete.subscription?.id)
+      await stripeInstance.subscriptions?.cancel(
         projectToDelete.subscription.id
       );
-    }
+
+    // Removing deleted project vectors from the pinecone DB.
+    await pinecone
+      .Index("content-insight-1-index")
+      .namespace(userId)
+      .deleteMany(projectToDelete.projectPineconeVectorsIdList);
 
     // Removing project from DB.
     await Project.findByIdAndDelete(projectId);
@@ -36,14 +44,9 @@ async function deleteProject(
       { new: true }
     ).populate("userProjects");
 
-    // Removing deleted project vectors from the pinecone DB.
-    await pinecone
-      .Index("content-insight-1-index")
-      ._delete({ deleteRequest: { namespace: userId, filter: { projectId } } });
-
     res.status(201).json(updatedUser?.userProjects);
   } catch (error: any) {
-    error.message = "Error creating the project. \n" + error.message;
+    error.message = "Error deleting the project. \n" + error.message;
     next(error);
   }
 }

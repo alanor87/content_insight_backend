@@ -90,15 +90,15 @@ async function createQuestionContext({
   vector: number[];
 }) {
   try {
-    const response = await pinecone.Index("content-insight-1-index").query({
-      queryRequest: {
+    const response = await pinecone
+      .Index("content-insight-1-index")
+      .namespace(userId)
+      .query({
         vector,
         filter: { projectId: { $eq: projectId } },
         topK: 5,
         includeMetadata: true,
-        namespace: userId,
-      },
-    });
+      });
     return response?.matches?.map((match: any) => match.metadata) || [];
   } catch (error: any) {
     const message = "Error in creating question context.";
@@ -115,7 +115,7 @@ export default async function getRequestCompletion(
   next: NextFunction
 ) {
   try {
-    const { userId, projectId, question } = req.body;
+    const { userId, projectId, question, addWidgetLimitations} = req.body;
 
     /** Extracting the question keywords with openAI. We need to have those to query a meaningful context from the pinecone db.
      * Utility words like 'how', 'why', 'is' and so on would pollute the pinecone db query result with unneeded noise.
@@ -145,28 +145,26 @@ export default async function getRequestCompletion(
      * and from which it is going to formulate the answer.
      */
     const context = metadata?.map((data: any) => data.content).join(" ");
-    console.log("[Pinecone query result for question keywords] : ", context);
 
     /** Here we formulate a concise question to the openAi completions endpoint, basically, now we are a user
      * that is asking a question to chatGPT - this is the best way to view what is happening.
      */
 
-    const mainPrompt = `
-  You are a chat bot representative of the company, who received the question from a customer.
-  The customer asks you : ${question}
-  
-  This is the information that you know on this subject :  ${
-    context || "you know nothing on this particular subject."
-  }.
+    let mainPrompt = `
+  You are a chat bot representative of the company, who received the question from a customer. The customer asks you : 
+  ${question}.
 
+  This is the information context on this subject :  ${context || "you know nothing on this particular subject."}.
   Answer the customer's question concisely and truthfully, basing only on the informatin, provided above.
+  If there is no information on the user question in the information context, tell the customer that you are not aware of the subject.
  `;
-
-    // console.log("[Current prompt] :", mainPrompt);
-
-    const response = await getOpenAiCompletions(mainPrompt);
-
-    // console.log("[OpenAI user prompt response] :", response);
+ 
+ 
+ let response = await getOpenAiCompletions(mainPrompt);
+ 
+  if(addWidgetLimitations) {
+    response = response.slice(0, response.length / 2) + '... this is DEMO version, please, update your subscription.';
+  }
 
     res.status(200).json({ response });
   } catch (error: any) {

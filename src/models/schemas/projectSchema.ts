@@ -24,6 +24,7 @@ const ProjectSchema = new Schema(
         },
       },
     ],
+    projectPineconeVectorsIdList : [String],
     widgetSettings: {
       widgetHeaderColor: {
         type: String,

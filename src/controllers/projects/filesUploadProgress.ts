@@ -2,7 +2,6 @@ import { Response, NextFunction } from "express";
 import { pinecone } from "@/db/connect-pinecone";
 import { Project } from "@/models";
 import { textParser, createEmbeddings, uploadedFilesCache, generateId } from "@/utils";
-import { VectorOperationsApi } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch/apis/VectorOperationsApi";
 import { CHUNK_SIZE, OPENAI_EMBEDDING_MODEL } from "@/utils/constants";
 import { ProjectIngestedDataType, RequestUserIdType, UploadedFilesCacheType } from "@/types/common";
 
@@ -35,10 +34,9 @@ async function filesUploadProgress(
       console.log("Closing SSE session.");
       res.end();
     });
-
-    let index: VectorOperationsApi;
-    index = pinecone.Index("content-insight-1-index");                               // This should be assigned to the variable, as the number of indexes will exceed one.
+                          
     const projectIngestedData: ProjectIngestedDataType[] = [];                       // Data on all the ingested files to be added to the project in mongoDB.
+    const projectPineconeVectorsIdList: string[] = [];                               // List of all the Pinecone vectors id for this project, for when need to be deleted from Pinecone.
     const {files} = uploadedFilesCache.get(filesCacheId) as UploadedFilesCacheType;  // Getting uploaded files from the temporary storage object.
     for (let i = 0; i < files.length; i += 1) {                                      // Generating and upserting vectors for each of files.
       const { originalname, size, buffer } = files[i];
@@ -84,18 +82,24 @@ async function filesUploadProgress(
           title,
           content: section.content,
         };
+        projectPineconeVectorsIdList.push(id);
         return { id, values, metadata };
       });
 
-      await index.upsert({ upsertRequest: { vectors, namespace: userId } });
+      // The index should be assigned to the variable, as the number of indexes will exceed one.
+      await pinecone.Index("content-insight-1-index").namespace(userId).upsert(vectors);
+
       console.log(`${title} upserted.`);
       res.write(`event: fileIngested\n`);
       res.write(`data: ${originalname} upserted.\n\n`);
     }
 
-    const updatedProject = await Project.findByIdAndUpdate(                           // Writing ingested files info to the mongoDB.
+    const updatedProject = await Project.findByIdAndUpdate(     // Writing ingested files and vectors Id info to the mongoDB.
       projectId,
-      { $push: { projectIngestedData: { $each: projectIngestedData } } },
+      { $push: { 
+        projectIngestedData: { $each: projectIngestedData },
+        projectPineconeVectorsIdList : {$each : projectPineconeVectorsIdList}
+     } },
       { new: true }
     );
     console.log(

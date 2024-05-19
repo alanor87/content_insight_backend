@@ -7,7 +7,9 @@ async function getWidgetStyles(
   next: NextFunction
 ) {
   try {
-    const { projectId } = req.body;
+    const { projectId, addWidgetLimitations } = req.body;
+    if(addWidgetLimitations) res.status(403).send();
+
     const project = await Project.findById(projectId);
 
     if (!project) throw Error("Project not found, can not load widget styles.");

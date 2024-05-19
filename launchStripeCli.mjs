@@ -27,7 +27,7 @@ import * as dotenv from "dotenv";
       const command = "cmd"; // Windows command prompt
       const args = [
         "/k",
-        "stripe listen --forward-to localhost:3300/api/v1/webhooks/stripe -s",
+        "stripe listen --api-key sk_test_51Nxd5pEafHQOYw4BFKYD0epHu7JVmnNOy7ZPKK28WzeN1DcIP4ExnJGdlB5jax1aJB9yUfreFRQ4U55OoGKWD42y00u4UUIKy3 --forward-to localhost:3300/api/v1/webhooks/stripe -s",
       ]; // Command to execute in the new window
 
       const child = spawn(command, args, {
