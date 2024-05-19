@@ -13,7 +13,7 @@
     shadowRootWrapper.setAttribute("id", "clarify_bot_widget_wrapper");
     shadowRootWrapper.setAttribute(
       "style",
-      "position: absolute; z-index: 10000; overflow: hidden;"
+      "position: absolute; z-index: 10000; overflow: hidden; color: black;"
     );
     const shadowDOM = shadowRootWrapper.attachShadow({
       mode: "open",
