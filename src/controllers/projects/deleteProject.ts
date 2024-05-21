@@ -26,11 +26,12 @@ async function deleteProject(
         projectToDelete.subscription.id
       );
 
-    // Removing deleted project vectors from the pinecone DB.
-    await pinecone
-      .Index("content-insight-1-index")
-      .namespace(userId)
-      .deleteMany(projectToDelete.projectPineconeVectorsIdList);
+    // Removing deleted project vectors from the pinecone DB, if there are any.
+    if (projectToDelete.projectPineconeVectorsIdList.length)
+      await pinecone
+        .Index("content-insight-1-index")
+        .namespace(userId)
+        .deleteMany(projectToDelete.projectPineconeVectorsIdList);
 
     // Removing project from DB.
     await Project.findByIdAndDelete(projectId);
